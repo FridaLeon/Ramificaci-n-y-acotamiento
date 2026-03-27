@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>TSP Interactivo PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+/* CONTENEDOR */
+.container {
+    display: flex;
+    width: 500vw;
+    transition: transform 1s ease;
+}
+
+/* SECCIONES */
+.section {
+    width: 100vw;
+    height: 100vh;
+    padding: 40px;
+    box-sizing: border-box;
+    color: white;
+}
+
+/* FONDOS */
+#portada { background: linear-gradient(#0f172a,#1e3a8a); }
+#intro { background: #1e293b; }
+#desarrollo { background: #020617; }
+#conclusiones { background: #064e3b; }
+#referencias { background: #3b0764; }
+
+/* NAV */
+nav {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    background: rgba(0,0,0,0.7);
+    z-index: 10;
+}
+
+nav button {
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* PORTADA */
+.portada-box {
+    text-align: center;
+    margin-top: 15%;
+    animation: fade 1.5s;
+}
+
+/* MAPA */
+.map {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd') center/cover;
+}
+
+.city {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: red;
+    border-radius: 50%;
+}
+
+/* LINEAS MAPA */
+.route {
+    position: absolute;
+    height: 3px;
+    background: yellow;
+    transform-origin: left;
+    animation: draw 2s forwards;
+}
+
+@keyframes draw {
+    from {width: 0;}
+}
+
+/* ÁRBOL */
+.tree svg {
+    width: 100%;
+    height: 300px;
+}
+
+/* PASOS */
+.step { display: none; }
+.active-step { display: block; }
+
+/* ANIM */
+@keyframes fade {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+    <button onclick="goTo(0)">Inicio</button>
+    <button onclick="goTo(1)">Intro</button>
+    <button onclick="goTo(2)">Desarrollo</button>
+    <button onclick="goTo(3)">Conclusiones</button>
+    <button onclick="goTo(4)">Referencias</button>
+</nav>
+
+<div class="container" id="container">
+
+<!-- PORTADA -->
+<div class="section" id="portada">
+    <div class="portada-box">
+        <h1>🌍 Proyecto TSP Interactivo</h1>
+        <p>Optimización de rutas con Ramificación y Acotamiento</p>
+        <p>Explora cómo encontrar la mejor ruta entre ciudades</p>
+        <button onclick="goTo(1)">Comenzar</button>
+    </div>
+</div>
+
+<!-- INTRO -->
+<div class="section" id="intro">
+    <h2>🧭 Introducción</h2>
+    <p>Este sitio explica cómo resolver el Problema del Agente Viajero usando optimización.</p>
+</div>
+
+<!-- DESARROLLO -->
+<div class="section" id="desarrollo">
+
+<h2>🧮 Paso a paso</h2>
+<div id="steps">
+    <div class="step active-step">Paso 1: Definir matriz</div>
+    <div class="step">Paso 2: Calcular rutas posibles</div>
+    <div class="step">Paso 3: Comparar costos</div>
+    <div class="step">Paso 4: Elegir ruta óptima</div>
+</div>
+<button onclick="nextStep()">Siguiente</button>
+
+<h2>🌳 Árbol de ramificación</h2>
+<div class="tree">
+<svg id="treeSVG">
+    <line x1="200" y1="20" x2="100" y2="100" stroke="white"/>
+    <line x1="200" y1="20" x2="300" y2="100" stroke="white"/>
+    <circle cx="200" cy="20" r="10" fill="yellow"/>
+    <circle cx="100" cy="100" r="10" fill="red"/>
+    <circle cx="300" cy="100" r="10" fill="red"/>
+</svg>
+</div>
+
+<h2>🗺️ Mapa con rutas</h2>
+<div class="map" id="map">
+    <div class="city" style="top:50px; left:100px;"></div>
+    <div class="city" style="top:200px; left:200px;"></div>
+    <div class="city" style="top:100px; left:300px;"></div>
+</div>
+
+<button onclick="drawRoute()">Mostrar ruta</button>
+
+<h2>🧠 Cálculo automático</h2>
+<button onclick="solveTSP()">Calcular mejor ruta</button>
+<p id="result"></p>
+
+</div>
+
+<!-- CONCLUSIONES -->
+<div class="section" id="conclusiones">
+    <h2>🌎 Conclusiones</h2>
+    <p>✔ Método exacto</p>
+    <p>❌ Complejo computacionalmente</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="section" id="referencias">
+    <h2>📚 Referencias</h2>
+    <p>Hillier & Lieberman</p>
+    <p>Taha</p>
+</div>
+
+</div>
+
+<script>
+let current = 0;
+function goTo(i){
+    document.getElementById("container").style.transform =
+    "translateX(-"+(i*100)+"vw)";
+}
+
+/* PASOS */
+let stepIndex = 0;
+function nextStep(){
+    let steps = document.querySelectorAll(".step");
+    steps[stepIndex].classList.remove("active-step");
+    stepIndex = (stepIndex+1)%steps.length;
+    steps[stepIndex].classList.add("active-step");
+}
+
+/* MAPA */
+function drawRoute(){
+    let map = document.getElementById("map");
+
+    let route = document.createElement("div");
+    route.className = "route";
+    route.style.top = "60px";
+    route.style.left = "110px";
+    route.style.width = "200px";
+
+    map.appendChild(route);
+}
+
+/* TSP SIMPLE */
+function solveTSP(){
+    let routes = [
+        {path:"A-B-C-D-A", cost:95},
+        {path:"A-B-D-C-A", cost:80},
+        {path:"A-C-B-D-A", cost:100}
+    ];
+
+    let best = routes.reduce((a,b)=> a.cost<b.cost?a:b);
+
+    document.getElementById("result").innerText =
+        "Mejor ruta: " + best.path + " con costo " + best.cost;
+}
+</script>
+
+</body>
+</html>
