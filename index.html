@@ -5,15 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TSP — Ramificación y Acotamiento | El Viaje Perfecto</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-<!-- ═══════════════ CSS ═══════════════ -->
 <style>
-:root{
-  --ink:#1a1008; --parchment:#f5ead8; --parchment-dark:#e8d5b7;
-  --copper:#b87333; --gold:#d4a017; --gold-light:#f0c040;
-  --teal:#1a6b5a; --teal-light:#2a9478; --rust:#8b3a1e;
-  --cream:#fdf6e3; --nav-h:68px;
-}
+:root{--ink:#1a1008;--parchment:#f5ead8;--parchment-dark:#e8d5b7;--copper:#b87333;--gold:#d4a017;--gold-light:#f0c040;--teal:#1a6b5a;--teal-light:#2a9478;--rust:#8b3a1e;--cream:#fdf6e3;--nav-h:68px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Crimson Pro',Georgia,serif;background:var(--ink);color:var(--ink);overflow-x:hidden;cursor:none}
@@ -21,183 +14,327 @@ a,button{cursor:none}
 
 /* CURSOR */
 #cur{position:fixed;width:16px;height:16px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference}
-#cur.big{width:32px;height:32px}
+#cur.big{width:30px;height:30px}
 #cur-ring{position:fixed;width:34px;height:34px;border:1.5px solid var(--copper);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(26,16,8,.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(184,115,51,.4);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;z-index:1000}
-.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);display:flex;align-items:center;gap:.5rem;user-select:none}
-.nav-links{display:flex;gap:1.4rem;list-style:none}
-.nav-links a{color:rgba(245,234,216,.6);font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-decoration:none;text-transform:uppercase;padding-bottom:2px;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(26,16,8,.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(184,115,51,.4);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;z-index:1000;gap:1rem}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);display:flex;align-items:center;gap:.4rem;user-select:none;flex-shrink:0}
+.nav-links{display:flex;gap:.9rem;list-style:none;flex-wrap:wrap;justify-content:flex-end}
+.nav-links a{color:rgba(245,234,216,.6);font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-decoration:none;text-transform:uppercase;padding-bottom:2px;border-bottom:1px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap}
 .nav-links a:hover,.nav-links a.active{color:var(--gold-light);border-bottom-color:var(--gold)}
 
-/* PAGE SYSTEM */
+/* PAGES */
 .page{display:none;min-height:100vh;padding-top:var(--nav-h)}
 .page.active{display:block}
+
+/* ─── PAGE NAV BUTTONS ─── */
+.page-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:2.5rem 2rem;flex-wrap:wrap}
+.page-nav.dark{background:var(--ink);border-top:1px solid rgba(184,115,51,.22)}
+.page-nav.light{background:#d4c9ae;border-top:1px solid #bbb}
+.page-nav.teal-bg{background:#0c3d2e;border-top:1px solid rgba(255,255,255,.1)}
+.page-nav.rust-bg{background:#2a1005;border-top:1px solid rgba(184,115,51,.22)}
+.pnav-btn{display:inline-flex;align-items:center;gap:.5rem;font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.72rem 1.4rem;border:none;text-decoration:none;transition:transform .18s,box-shadow .18s,background .18s;white-space:nowrap}
+.pnav-btn.prev{background:rgba(255,255,255,.09);color:var(--parchment);border:1px solid rgba(245,234,216,.22)}
+.pnav-btn.prev:hover{background:rgba(255,255,255,.16);transform:translateX(-3px)}
+.pnav-btn.next{background:var(--gold);color:var(--ink)}
+.pnav-btn.next:hover{transform:translateX(3px);box-shadow:4px 0 14px rgba(212,160,23,.4)}
+.pnav-btn.quiz-cta{background:var(--rust);color:white}
+.pnav-btn.quiz-cta:hover{background:#a04025;transform:translateY(-2px);box-shadow:0 6px 16px rgba(139,58,30,.4)}
+.page-nav-center{font-family:'Space Mono',monospace;font-size:.6rem;color:rgba(245,234,216,.35);letter-spacing:.12em;text-transform:uppercase}
+
+/* ─── FOOTER ─── */
+footer{background:var(--ink);border-top:1px solid rgba(184,115,51,.28);padding:2rem 1rem;text-align:center}
+.footer-inner{max-width:700px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.footer-line{width:55px;height:1px;background:rgba(184,115,51,.4)}
+.footer-name{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);font-weight:900;font-style:italic;letter-spacing:.06em}
+.footer-sub{font-family:'Space Mono',monospace;font-size:.6rem;color:rgba(245,234,216,.3);letter-spacing:.2em;text-transform:uppercase}
 
 /* ═══ PORTADA ═══ */
 #portada{background:var(--ink)}
 .portada-hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 #star-c,#grid-c{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.cmp{position:absolute;right:7%;top:12%;width:170px;height:170px;opacity:.5;pointer-events:none;animation:spin 18s linear infinite}
+.cmp{position:absolute;right:7%;top:12%;width:165px;height:165px;opacity:.5;pointer-events:none;animation:spin 18s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hero-inner{position:relative;z-index:5;text-align:center;max-width:840px;padding:2rem}
-.eyebrow{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.26em;color:var(--copper);text-transform:uppercase;margin-bottom:1.5rem}
-.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,8vw,6rem);font-weight:900;color:var(--parchment);line-height:1.03;margin-bottom:1.3rem}
+.eyebrow{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.24em;color:var(--copper);text-transform:uppercase;margin-bottom:1.4rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,8vw,6rem);font-weight:900;color:var(--parchment);line-height:1.03;margin-bottom:1.2rem}
 .hero-title em{color:var(--gold);font-style:italic}
-.hero-sub{font-size:clamp(1rem,2.2vw,1.3rem);color:var(--parchment-dark);line-height:1.75;font-style:italic;margin-bottom:2.2rem}
-.badges{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.2rem}
-.badge{border:1px solid rgba(212,160,23,.35);padding:.6rem 1.1rem;color:var(--parchment-dark);font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.07em;background:rgba(255,255,255,.03);display:flex;align-items:center;gap:.45rem;transition:border-color .2s,background .2s}
+.hero-sub{font-size:clamp(1rem,2vw,1.28rem);color:var(--parchment-dark);line-height:1.75;font-style:italic;margin-bottom:2rem}
+.badges{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.badge{border:1px solid rgba(212,160,23,.35);padding:.55rem 1rem;color:var(--parchment-dark);font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.06em;background:rgba(255,255,255,.03);display:flex;align-items:center;gap:.4rem;transition:border-color .2s,background .2s}
 .badge:hover{border-color:var(--gold);background:rgba(212,160,23,.09)}
 .cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-gold{display:inline-block;background:var(--gold);color:var(--ink);font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;padding:.9rem 2.2rem;border:none;text-decoration:none;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.btn-gold{display:inline-block;background:var(--gold);color:var(--ink);font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;padding:.88rem 2.1rem;border:none;text-decoration:none;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
 .btn-gold::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.22);transform:translateX(-105%);transition:transform .35s}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(212,160,23,.3)}
 .btn-gold:hover::before{transform:translateX(0)}
-.btn-out{display:inline-block;background:transparent;color:var(--parchment);font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;padding:.9rem 2.2rem;border:1px solid rgba(245,234,216,.35);text-decoration:none;transition:border-color .2s,transform .2s}
+.btn-out{display:inline-block;background:transparent;color:var(--parchment);font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;padding:.88rem 2.1rem;border:1px solid rgba(245,234,216,.35);text-decoration:none;transition:border-color .2s,transform .2s}
 .btn-out:hover{border-color:var(--parchment);transform:translateY(-2px)}
 .scroll-ind{position:absolute;bottom:1.8rem;left:50%;transform:translateX(-50%);color:var(--copper);font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;display:flex;flex-direction:column;align-items:center;gap:.45rem;animation:bob 2.2s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
-
-/* Portada sections */
 .p-obj{background:var(--parchment);padding:5rem 2rem}
 .p-idx{background:var(--ink);padding:5rem 2rem}
 .inner{max-width:1100px;margin:0 auto}
-.slabel{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.28em;color:var(--copper);text-transform:uppercase;margin-bottom:.8rem}
-.stitle{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--ink);margin-bottom:2.8rem;line-height:1.2}
+.slabel{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.27em;color:var(--copper);text-transform:uppercase;margin-bottom:.75rem}
+.stitle{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--ink);margin-bottom:2.6rem;line-height:1.2}
 .stitle.lt{color:var(--parchment)}
-.obj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.6rem}
-.obj-card{background:#fff;padding:2rem;border:1px solid var(--parchment-dark);box-shadow:4px 4px 0 var(--copper);transition:transform .2s,box-shadow .2s}
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:1.5rem}
+.obj-card{background:#fff;padding:1.9rem;border:1px solid var(--parchment-dark);box-shadow:4px 4px 0 var(--copper);transition:transform .2s,box-shadow .2s}
 .obj-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--copper)}
-.obj-n{font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);font-weight:900;line-height:1;margin-bottom:.6rem}
-.obj-card h3{font-size:1.05rem;margin-bottom:.45rem}
-.obj-card p{color:#555;font-size:.95rem;line-height:1.65}
-.idx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.3rem}
-.idx-card{border:1px solid rgba(212,160,23,.2);padding:1.6rem 1.4rem;background:rgba(255,255,255,.025);position:relative;transition:background .2s,border-color .2s;overflow:hidden}
+.obj-n{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--gold);font-weight:900;line-height:1;margin-bottom:.55rem}
+.obj-card h3{font-size:1.03rem;margin-bottom:.42rem}
+.obj-card p{color:#555;font-size:.94rem;line-height:1.62}
+.idx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:1.25rem}
+.idx-card{border:1px solid rgba(212,160,23,.2);padding:1.5rem 1.35rem;background:rgba(255,255,255,.025);position:relative;transition:background .2s,border-color .2s;overflow:hidden}
 .idx-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .3s}
 .idx-card:hover{background:rgba(212,160,23,.05);border-color:var(--gold)}
 .idx-card:hover::before{transform:scaleY(1)}
-.idx-n{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--copper);letter-spacing:.14em;margin-bottom:.55rem}
-.idx-card h3{color:var(--parchment);font-size:1rem;margin-bottom:.38rem}
-.idx-card p{color:rgba(245,234,216,.46);font-size:.84rem;line-height:1.55}
-.idx-card .go{display:inline-block;margin-top:1rem;color:var(--gold);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.09em;text-decoration:none}
+.idx-n{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--copper);letter-spacing:.13em;margin-bottom:.5rem}
+.idx-card h3{color:var(--parchment);font-size:.98rem;margin-bottom:.35rem}
+.idx-card p{color:rgba(245,234,216,.45);font-size:.82rem;line-height:1.52}
+.idx-card .go{display:inline-block;margin-top:.9rem;color:var(--gold);font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.09em;text-decoration:none}
 
-/* ═══ SECTION HERO ═══ */
-.sec-hero{padding:5.5rem 2rem 3.5rem;text-align:center;position:relative;overflow:hidden}
+/* SECTION HERO */
+.sec-hero{padding:5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden}
 .sec-hero.dark{background:var(--ink)}
 .sec-hero.teal{background:linear-gradient(135deg,var(--teal) 0%,#0c3d2e 100%)}
 .sec-hero.rust{background:radial-gradient(ellipse at center,#3d1f0a 0%,var(--ink) 70%)}
-.sec-hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.6rem);color:var(--parchment);margin-bottom:1rem;position:relative;z-index:1}
-.sec-hero p{color:rgba(245,234,216,.7);font-size:1.08rem;font-style:italic;max-width:620px;margin:0 auto;line-height:1.75;position:relative;z-index:1}
+.sec-hero.quiz-bg{background:linear-gradient(135deg,#180828 0%,#200a18 100%)}
+.sec-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,3.4rem);color:var(--parchment);margin-bottom:.9rem;position:relative;z-index:1}
+.sec-hero p{color:rgba(245,234,216,.68);font-size:1.06rem;font-style:italic;max-width:600px;margin:0 auto;line-height:1.72;position:relative;z-index:1}
 
-/* ═══ INTRO ═══ */
+/* INTRO */
 #introduccion{background:var(--parchment)}
-.intro-body{max-width:900px;margin:0 auto;padding:4rem 2rem 5rem}
-.cblock{margin-bottom:2.6rem;padding:2rem 1.9rem;background:#fff;border-left:4px solid var(--gold);box-shadow:0 2px 20px rgba(0,0,0,.07)}
-.cblock h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:1rem}
-.cblock p{color:#444;line-height:1.82;font-size:1rem;margin-bottom:.75rem}
-.cblock ul,.cblock ol{padding-left:1.4rem;color:#444;line-height:2.1}
-.cblock li{margin-bottom:.2rem}
+.intro-body{max-width:900px;margin:0 auto;padding:3.5rem 2rem 1.5rem}
+.cblock{margin-bottom:2.4rem;padding:1.9rem;background:#fff;border-left:4px solid var(--gold);box-shadow:0 2px 18px rgba(0,0,0,.07)}
+.cblock h2{font-family:'Playfair Display',serif;font-size:1.55rem;color:var(--ink);margin-bottom:.95rem}
+.cblock p{color:#444;line-height:1.82;font-size:1rem;margin-bottom:.72rem}
+.cblock ul,.cblock ol{padding-left:1.35rem;color:#444;line-height:2.05}
 .cblock li strong{color:var(--ink)}
-.kquote{background:var(--ink);color:var(--parchment-dark);padding:1.2rem 1.7rem;margin:1.4rem 0;border-left:4px solid var(--gold);font-style:italic;font-size:1rem;line-height:1.7}
-.fbox{background:var(--ink);color:var(--gold-light);font-family:'Space Mono',monospace;padding:1.3rem 1.8rem;text-align:center;margin:1.4rem 0;font-size:.9rem;border:1px solid rgba(212,160,23,.3);letter-spacing:.03em;line-height:2}
-.asteps{counter-reset:st;list-style:none;padding:0;margin:1.3rem 0}
-.asteps li{counter-increment:st;padding:.85rem 1rem .85rem 3.8rem;position:relative;margin-bottom:.45rem;background:rgba(212,160,23,.06);border:1px solid rgba(212,160,23,.18);color:#444;line-height:1.7;font-size:.98rem}
-.asteps li::before{content:counter(st,decimal-leading-zero);position:absolute;left:.85rem;top:50%;transform:translateY(-50%);font-family:'Space Mono',monospace;font-size:.95rem;color:var(--gold);font-weight:700}
-.tree-prev{background:#fff;border:1px solid var(--parchment-dark);padding:1.8rem;margin:2rem 0;text-align:center}
-.tree-prev h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink);margin-bottom:1rem}
-#intro-tree{width:100%;max-width:600px;display:block;margin:0 auto}
+.kquote{background:var(--ink);color:var(--parchment-dark);padding:1.1rem 1.6rem;margin:1.3rem 0;border-left:4px solid var(--gold);font-style:italic;font-size:.98rem;line-height:1.7}
+.fbox{background:var(--ink);color:var(--gold-light);font-family:'Space Mono',monospace;padding:1.2rem 1.6rem;text-align:center;margin:1.3rem 0;font-size:.88rem;border:1px solid rgba(212,160,23,.3);letter-spacing:.03em;line-height:1.95}
+.asteps{counter-reset:st;list-style:none;padding:0;margin:1.2rem 0}
+.asteps li{counter-increment:st;padding:.8rem 1rem .8rem 3.6rem;position:relative;margin-bottom:.42rem;background:rgba(212,160,23,.06);border:1px solid rgba(212,160,23,.17);color:#444;line-height:1.68;font-size:.97rem}
+.asteps li::before{content:counter(st,decimal-leading-zero);position:absolute;left:.8rem;top:50%;transform:translateY(-50%);font-family:'Space Mono',monospace;font-size:.92rem;color:var(--gold);font-weight:700}
+.tree-prev{background:#fff;border:1px solid var(--parchment-dark);padding:1.7rem;margin:1.8rem 0;text-align:center}
+.tree-prev h3{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--ink);margin-bottom:.9rem}
+#intro-tree{width:100%;max-width:590px;display:block;margin:0 auto}
 
-/* ═══ DESARROLLO ═══ */
+/* DESARROLLO */
 #desarrollo{background:#f0e8d4}
-.dev-body{max-width:1180px;margin:0 auto;padding:3.5rem 2rem 5rem}
-.card{background:#fff;padding:2.4rem;border:1px solid #ccc;margin-bottom:2.8rem}
+.dev-body{max-width:1180px;margin:0 auto;padding:3.2rem 2rem 1.5rem}
+.card{background:#fff;padding:2.3rem;border:1px solid #ccc;margin-bottom:2.6rem}
 .card.cs{box-shadow:6px 6px 0 var(--teal)}
 .card.cg{box-shadow:4px 4px 0 var(--copper)}
 .card.ck{box-shadow:6px 6px 0 var(--ink)}
-.card h2{font-family:'Playfair Display',serif;font-size:1.7rem;margin-bottom:1.3rem;color:var(--ink)}
+.card h2{font-family:'Playfair Display',serif;font-size:1.65rem;margin-bottom:1.2rem;color:var(--ink)}
 .card h2.tc{color:var(--teal)}
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
 @media(max-width:660px){.pgrid{grid-template-columns:1fr}}
-.psec h3{font-family:'Space Mono',monospace;font-size:.67rem;color:var(--copper);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.85rem;padding-bottom:.45rem;border-bottom:1px solid var(--parchment-dark)}
-.psec p{color:#444;line-height:1.8;margin-bottom:.55rem}
-.psec ul{padding-left:1.3rem;color:#444;line-height:2.1}
-.mwrap{overflow-x:auto;margin:1.4rem 0}
-.dtab{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.85rem}
-.dtab th{background:var(--teal);color:#fff;padding:.65rem 1rem;text-align:center;font-weight:700}
-.dtab td{padding:.55rem 1rem;text-align:center;border:1px solid #ddd;transition:background .15s}
+.psec h3{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--copper);letter-spacing:.17em;text-transform:uppercase;margin-bottom:.82rem;padding-bottom:.42rem;border-bottom:1px solid var(--parchment-dark)}
+.psec p{color:#444;line-height:1.8;margin-bottom:.52rem}
+.psec ul{padding-left:1.25rem;color:#444;line-height:2.05}
+.mwrap{overflow-x:auto;margin:1.3rem 0}
+.dtab{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.84rem}
+.dtab th{background:var(--teal);color:#fff;padding:.62rem .95rem;text-align:center;font-weight:700}
+.dtab td{padding:.52rem .95rem;text-align:center;border:1px solid #ddd;transition:background .15s}
 .dtab tr:nth-child(even) td{background:rgba(26,107,90,.04)}
-.dtab td:hover{background:rgba(26,107,90,.13)}
+.dtab td:hover{background:rgba(26,107,90,.12)}
 .dtab .dg{background:var(--parchment-dark);color:var(--copper);font-weight:700}
-#map-wrap{width:100%;height:400px;position:relative;overflow:hidden;border:1px solid #bbb;border-radius:3px}
+#map-wrap{width:100%;height:390px;position:relative;overflow:hidden;border:1px solid #bbb;border-radius:3px}
 #map-canvas{width:100%;height:100%;display:block}
-.btn-row{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
-.mbtn{background:var(--teal);color:#fff;border:none;padding:.62rem 1.25rem;font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;transition:background .2s,transform .15s}
+.btn-row{display:flex;gap:.7rem;margin-top:.95rem;flex-wrap:wrap}
+.mbtn{background:var(--teal);color:#fff;border:none;padding:.6rem 1.2rem;font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,transform .15s}
 .mbtn:hover{background:var(--teal-light);transform:translateY(-1px)}
 .mbtn.rd{background:var(--rust)}
 .mbtn.rd:hover{background:#a0481f}
-#map-status{margin-top:.8rem;min-height:26px;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--teal)}
-.stabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.3rem}
-.stab{background:#fff;border:2px solid var(--parchment-dark);color:var(--ink);padding:.48rem 1rem;font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.05em;transition:all .2s}
+#map-status{margin-top:.75rem;min-height:24px;font-family:'Space Mono',monospace;font-size:.73rem;color:var(--teal)}
+.stabs{display:flex;gap:.38rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.stab{background:#fff;border:2px solid var(--parchment-dark);color:var(--ink);padding:.46rem .95rem;font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.05em;transition:all .2s}
 .stab:hover{background:rgba(26,107,90,.08);border-color:var(--teal)}
 .stab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
-.spanel{display:none;background:#fff;padding:1.9rem;border:1px solid #ddd;box-shadow:4px 4px 0 var(--teal);animation:pfade .35s ease}
+.spanel{display:none;background:#fff;padding:1.8rem;border:1px solid #ddd;box-shadow:4px 4px 0 var(--teal);animation:pfade .35s ease}
 .spanel.active{display:block}
 @keyframes pfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.spanel h3{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--teal);margin-bottom:.9rem}
-.spanel p{color:#444;line-height:1.82;margin-bottom:.85rem}
+.spanel h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--teal);margin-bottom:.85rem}
+.spanel p{color:#444;line-height:1.82;margin-bottom:.82rem}
 .spanel strong{color:var(--ink)}
-.code{background:var(--ink);color:var(--gold-light);font-family:'Space Mono',monospace;padding:1.2rem 1.5rem;font-size:.77rem;line-height:1.85;margin:1rem 0;overflow-x:auto;white-space:pre;border-left:3px solid var(--gold)}
+.code{background:var(--ink);color:var(--gold-light);font-family:'Space Mono',monospace;padding:1.15rem 1.45rem;font-size:.76rem;line-height:1.85;margin:.95rem 0;overflow-x:auto;white-space:pre;border-left:3px solid var(--gold)}
 #tree-canvas{width:100%;display:block;background:#fafaf8;border:1px solid #ddd}
-.tctrl{display:flex;gap:.75rem;margin-bottom:.9rem;flex-wrap:wrap}
-#tree-info{margin-top:1rem;padding:.9rem 1.3rem;background:rgba(26,107,90,.08);border-left:3px solid var(--teal);font-family:'Space Mono',monospace;font-size:.75rem;color:var(--ink);line-height:1.75;min-height:65px}
-.sol-box{background:var(--teal);color:#fff;padding:2.8rem 2.2rem;text-align:center;margin:2rem 0;box-shadow:8px 8px 0 var(--ink)}
-.sol-box h2{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.9rem;font-style:italic}
-.sol-route{font-family:'Space Mono',monospace;font-size:1rem;background:rgba(255,255,255,.14);padding:.9rem 1.8rem;display:inline-block;margin:.8rem 0;letter-spacing:.09em}
-.sol-cost{font-size:3.3rem;font-family:'Playfair Display',serif;color:var(--gold-light);font-weight:900;line-height:1.1}
-.sol-box p{opacity:.85;margin-top:.5rem;line-height:1.7}
+.tctrl{display:flex;gap:.7rem;margin-bottom:.85rem;flex-wrap:wrap}
+#tree-info{margin-top:.95rem;padding:.85rem 1.25rem;background:rgba(26,107,90,.08);border-left:3px solid var(--teal);font-family:'Space Mono',monospace;font-size:.73rem;color:var(--ink);line-height:1.72;min-height:62px}
+.sol-box{background:var(--teal);color:#fff;padding:2.6rem 2rem;text-align:center;margin:1.8rem 0;box-shadow:8px 8px 0 var(--ink)}
+.sol-box h2{font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:.85rem;font-style:italic}
+.sol-route{font-family:'Space Mono',monospace;font-size:.97rem;background:rgba(255,255,255,.14);padding:.85rem 1.7rem;display:inline-block;margin:.75rem 0;letter-spacing:.08em}
+.sol-cost{font-size:3.1rem;font-family:'Playfair Display',serif;color:var(--gold-light);font-weight:900;line-height:1.1}
+.sol-box p{opacity:.85;margin-top:.48rem;line-height:1.68}
 
-/* ═══ CONCLUSIONES ═══ */
+/* CONCLUSIONES */
 #conclusiones{background:var(--cream)}
-.conc-body{max-width:1000px;margin:0 auto;padding:4rem 2rem 5rem}
-.pc{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem;margin-bottom:2.8rem}
+.conc-body{max-width:1000px;margin:0 auto;padding:3.8rem 2rem 1.5rem}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:1.7rem;margin-bottom:2.7rem}
 @media(max-width:620px){.pc{grid-template-columns:1fr}}
-.pbox,.cbox{padding:1.9rem;background:#fff}
+.pbox,.cbox{padding:1.8rem;background:#fff}
 .pbox{border-top:4px solid var(--teal);box-shadow:4px 4px 0 var(--teal)}
 .cbox{border-top:4px solid var(--rust);box-shadow:4px 4px 0 var(--rust)}
-.pbox h3{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--teal);margin-bottom:.9rem}
-.cbox h3{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--rust);margin-bottom:.9rem}
-.pbox ul,.cbox ul{padding-left:1.3rem;color:#444;line-height:2.2}
-.ctitle{font-family:'Playfair Display',serif;font-size:1.75rem;color:var(--ink);margin-bottom:1.4rem}
-.cwrap{overflow-x:auto;margin-bottom:2.8rem}
-.ctab{width:100%;border-collapse:collapse;font-size:.88rem}
-.ctab th{background:var(--ink);color:var(--gold);font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.09em;padding:.85rem 1rem;text-align:left}
-.ctab td{padding:.75rem 1rem;border:1px solid var(--parchment-dark);vertical-align:top;line-height:1.65;color:#333}
+.pbox h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--teal);margin-bottom:.85rem}
+.cbox h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--rust);margin-bottom:.85rem}
+.pbox ul,.cbox ul{padding-left:1.25rem;color:#444;line-height:2.18}
+.ctitle{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--ink);margin-bottom:1.3rem}
+.cwrap{overflow-x:auto;margin-bottom:2.6rem}
+.ctab{width:100%;border-collapse:collapse;font-size:.87rem}
+.ctab th{background:var(--ink);color:var(--gold);font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.09em;padding:.82rem .95rem;text-align:left}
+.ctab td{padding:.72rem .95rem;border:1px solid var(--parchment-dark);vertical-align:top;line-height:1.62;color:#333}
 .ctab tr:nth-child(even) td{background:rgba(212,160,23,.04)}
 .ctab tr.hl td{background:rgba(26,107,90,.1);font-weight:600}
-.tag{display:inline-block;padding:.1rem .52rem;font-family:'Space Mono',monospace;font-size:.6rem;border-radius:2px;margin:.12rem}
+.tag{display:inline-block;padding:.1rem .5rem;font-family:'Space Mono',monospace;font-size:.59rem;border-radius:2px;margin:.11rem}
 .tag.g{background:rgba(26,107,90,.15);color:var(--teal)}
 .tag.b{background:rgba(139,58,30,.15);color:var(--rust)}
 .tag.m{background:rgba(212,160,23,.2);color:#7a5a00}
-.ab{padding:2rem 1.9rem;background:#fff;margin-bottom:1.8rem}
+.ab{padding:1.9rem;background:#fff;margin-bottom:1.7rem}
 .ab.ag{border-left:4px solid var(--gold)}
 .ab.at{border-left:4px solid var(--teal)}
-.ab h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink);margin-bottom:.9rem}
-.ab p{color:#444;line-height:1.82;margin-bottom:.75rem}
+.ab h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--ink);margin-bottom:.85rem}
+.ab p{color:#444;line-height:1.82;margin-bottom:.72rem}
 
-/* ═══ REFERENCIAS ═══ */
+/* REFERENCIAS */
 #referencias{background:var(--ink)}
-.refs-body{max-width:900px;margin:0 auto;padding:4rem 2rem 5rem}
-.ritem{display:flex;gap:1.4rem;align-items:flex-start;padding:1.3rem 0;border-bottom:1px solid rgba(212,160,23,.12);transition:padding-left .22s}
-.ritem:hover{padding-left:.55rem}
-.rnum{font-family:'Space Mono',monospace;color:var(--gold);font-size:.88rem;flex-shrink:0;min-width:2rem}
-.rtxt{color:rgba(245,234,216,.63);line-height:1.75;font-size:.94rem}
+.refs-body{max-width:900px;margin:0 auto;padding:3.8rem 2rem 1.5rem}
+.ritem{display:flex;gap:1.3rem;align-items:flex-start;padding:1.25rem 0;border-bottom:1px solid rgba(212,160,23,.12);transition:padding-left .22s}
+.ritem:hover{padding-left:.52rem}
+.rnum{font-family:'Space Mono',monospace;color:var(--gold);font-size:.86rem;flex-shrink:0;min-width:2rem}
+.rtxt{color:rgba(245,234,216,.62);line-height:1.73;font-size:.93rem}
 .rtxt em{color:var(--parchment);font-style:italic}
 .rtxt a{color:var(--copper);border-bottom:1px dotted var(--copper);text-decoration:none;transition:color .2s}
 .rtxt a:hover{color:var(--gold)}
-.rnote{margin-top:2.8rem;padding:1.4rem;border:1px solid rgba(212,160,23,.17);background:rgba(255,255,255,.022);color:rgba(245,234,216,.42);font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.8;letter-spacing:.03em}
+.rnote{margin-top:2.6rem;padding:1.35rem;border:1px solid rgba(212,160,23,.17);background:rgba(255,255,255,.022);color:rgba(245,234,216,.4);font-family:'Space Mono',monospace;font-size:.69rem;line-height:1.8;letter-spacing:.03em}
 
-@media(max-width:760px){nav{padding:0 1rem}.nav-links{gap:.6rem}.nav-links a{font-size:.58rem}.cmp{display:none}}
+/* ═══ CUESTIONARIO ═══ */
+#cuestionario{background:#0e0a1a}
+.quiz-body{max-width:860px;margin:0 auto;padding:3.2rem 2rem 1.5rem}
+.q-card{background:rgba(255,255,255,.04);border:1px solid rgba(212,160,23,.17);padding:1.9rem;margin-bottom:1.7rem;border-radius:3px}
+.q-num{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--copper);letter-spacing:.17em;text-transform:uppercase;margin-bottom:.65rem}
+.q-text{font-family:'Crimson Pro',serif;font-size:1.18rem;color:var(--parchment);line-height:1.68;margin-bottom:1.25rem;font-weight:600}
+.q-options{display:flex;flex-direction:column;gap:.58rem}
+.q-opt{display:flex;align-items:flex-start;gap:.85rem;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1.5px solid rgba(245,234,216,.1);border-radius:2px;cursor:none;transition:border-color .2s,background .2s;user-select:none}
+.q-opt:hover{border-color:rgba(212,160,23,.38);background:rgba(212,160,23,.06)}
+.q-opt.selected{border-color:var(--gold);background:rgba(212,160,23,.1)}
+.q-opt.selected .opt-text{color:var(--parchment)}
+.q-opt.correct{border-color:var(--teal)!important;background:rgba(26,107,90,.16)!important}
+.q-opt.correct .opt-letter{color:#6df5c0!important}
+.q-opt.correct .opt-text{color:#9effd8!important}
+.q-opt.wrong{border-color:var(--rust)!important;background:rgba(139,58,30,.16)!important}
+.q-opt.wrong .opt-text{color:#ffb3a0!important;text-decoration:line-through}
+.opt-letter{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--gold);flex-shrink:0;min-width:1.1rem;font-weight:700;margin-top:.14rem}
+.opt-text{color:rgba(245,234,216,.72);font-size:.98rem;line-height:1.52}
+.q-explanation{display:none;margin-top:1.1rem;padding:.95rem 1.25rem;background:rgba(26,107,90,.12);border-left:3px solid var(--teal);color:rgba(245,234,216,.68);font-size:.93rem;line-height:1.68;border-radius:0 2px 2px 0}
+.q-explanation.visible{display:block;animation:pfade .4s ease}
+.q-explanation strong{color:var(--gold-light)}
+.quiz-submit-row{text-align:center;margin:2rem 0 1rem}
+.quiz-submit{background:var(--gold);color:var(--ink);font-family:'Space Mono',monospace;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;padding:.95rem 2.8rem;border:none;transition:transform .2s,box-shadow .2s}
+.quiz-submit:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(212,160,23,.35)}
+.quiz-submit:disabled{background:rgba(212,160,23,.32);color:rgba(26,16,8,.45);transform:none!important;box-shadow:none!important}
+.score-panel{display:none;text-align:center;padding:2.8rem 2rem;margin-bottom:2rem;background:rgba(255,255,255,.03);border:1px solid rgba(212,160,23,.24)}
+.score-panel.visible{display:block;animation:pfade .5s ease}
+.score-label{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--copper);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.9rem}
+.score-big{font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:900;line-height:1;margin-bottom:.48rem}
+.score-big.excellent{color:var(--gold-light)}
+.score-big.good{color:#7dd87d}
+.score-big.regular{color:#f0c040}
+.score-big.poor{color:#ff8060}
+.score-msg{font-family:'Crimson Pro',serif;font-size:1.25rem;color:var(--parchment-dark);font-style:italic;margin-bottom:1.4rem;line-height:1.58}
+.retry-btn{background:var(--rust);color:white;font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;padding:.88rem 2.1rem;border:none;transition:background .2s,transform .2s}
+.retry-btn:hover{background:#a04025;transform:translateY(-2px)}
+
+@media(max-width:760px){
+  nav{padding:0 .8rem}
+  .nav-links{gap:.5rem}
+  .nav-links a{font-size:.54rem}
+  .cmp{display:none}
+  .page-nav{padding:1.6rem 1rem}
+  .pnav-btn{font-size:.6rem;padding:.62rem .9rem}
+}
+
+/* ─── PDF BUTTON ─── */
+#pdf-fab{position:fixed;bottom:2rem;right:2rem;z-index:2000;background:var(--rust);color:white;border:none;border-radius:50px;padding:.78rem 1.5rem;font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:.55rem;box-shadow:0 4px 20px rgba(139,58,30,.5);transition:transform .2s,box-shadow .2s,background .2s;cursor:none}
+#pdf-fab:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(139,58,30,.6);background:#a04025}
+#pdf-fab .pdf-ico{font-size:1rem}
+#pdf-fab.hidden{display:none}
+
+/* ─── PDF MODAL ─── */
+#pdf-modal{display:none;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center}
+#pdf-modal.open{display:flex}
+#pdf-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+#pdf-modal-box{position:relative;z-index:1;background:#1e1408;border:1px solid rgba(212,160,23,.35);padding:2.8rem 2.5rem;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:pfade .3s ease}
+#pdf-modal-box h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--parchment);margin-bottom:.6rem}
+#pdf-modal-box p{color:rgba(245,234,216,.6);font-size:.95rem;line-height:1.7;margin-bottom:1.6rem}
+.pdf-sections{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.8rem}
+.pdf-sec-item{display:flex;align-items:center;gap:.85rem;padding:.75rem 1rem;border:1px solid rgba(212,160,23,.18);background:rgba(255,255,255,.03)}
+.pdf-sec-item input[type=checkbox]{width:17px;height:17px;accent-color:var(--gold);flex-shrink:0;cursor:none}
+.pdf-sec-label{color:var(--parchment-dark);font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.07em}
+.pdf-sec-label span{display:block;font-family:'Crimson Pro',serif;font-size:.88rem;color:rgba(245,234,216,.45);letter-spacing:0;margin-top:.1rem}
+.pdf-modal-btns{display:flex;gap:.9rem;flex-wrap:wrap}
+.pdf-go{background:var(--gold);color:var(--ink);border:none;font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:.82rem 1.8rem;flex:1;transition:transform .15s,box-shadow .15s;cursor:none}
+.pdf-go:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(212,160,23,.35)}
+.pdf-cancel{background:transparent;color:rgba(245,234,216,.5);border:1px solid rgba(245,234,216,.2);font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:.82rem 1.4rem;transition:border-color .2s,color .2s;cursor:none}
+.pdf-cancel:hover{border-color:rgba(245,234,216,.5);color:var(--parchment)}
+.pdf-note{margin-top:1.3rem;padding:.85rem 1rem;background:rgba(212,160,23,.07);border-left:3px solid var(--gold);color:rgba(245,234,216,.45);font-family:'Space Mono',monospace;font-size:.65rem;line-height:1.7;letter-spacing:.03em}
+
+/* ─── PRINT STYLES ─── */
+@media print{
+  *{cursor:default!important}
+  #cur,#cur-ring,nav,#pdf-fab,#pdf-modal,.page-nav,footer,.scroll-ind,#pdf-print-watermark{display:none!important}
+  body{background:white!important;color:#1a1008!important;font-size:10pt;overflow:visible!important}
+  .page{display:none!important;padding-top:0!important;min-height:auto!important}
+  .page.print-include{display:block!important}
+  .portada-hero{min-height:auto!important;height:auto!important;padding:3rem 2rem!important}
+  #star-c,#grid-c{display:none!important}
+  .cmp{display:none!important}
+  .hero-title{font-size:3rem!important;color:#1a1008!important}
+  .hero-title em{color:var(--copper)!important}
+  .hero-sub{color:#444!important}
+  .eyebrow{color:var(--copper)!important}
+  .badge{border-color:#ccc!important;color:#333!important}
+  .btn-gold,.btn-out,.cta-row{display:none!important}
+  .p-obj{background:#f5ead8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-idx{background:#1a1008!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sec-hero,.sec-hero.dark,.sec-hero.teal,.sec-hero.rust{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sec-hero h1{color:var(--parchment)!important}
+  .code{white-space:pre-wrap!important;word-break:break-all!important;font-size:7pt!important}
+  .card,.cblock,.ab,.pbox,.cbox{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid}
+  .sol-box{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}
+  /* Hide the interactive canvas-based elements — replaced by pdf-static-block */
+  .stab,.stabs,.tctrl,#autobtn,.mbtn,.btn-row,#map-status,#tree-info{display:none!important}
+  .spanel,.spanel.active{display:none!important}
+  #map-wrap,#tree-canvas,#map-canvas{display:none!important}
+  .card.ck:has(#map-wrap),.card.ck:has(#tree-canvas){display:none!important}
+  /* Show static PDF block */
+  #pdf-static-block{display:block!important}
+  .pc,.pgrid,.obj-grid,.idx-grid{break-inside:avoid}
+  .ritem{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  table{break-inside:avoid}
+  /* Static block print styles */
+  .pdf-static-section{margin-bottom:1.4rem;break-inside:avoid}
+  .pdf-static-h{font-family:Georgia,serif;font-size:13pt;color:#1a6b5a;margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:2px solid #1a6b5a}
+  .pdf-static-img{width:100%;max-width:100%;height:auto;border:1px solid #ccc;display:block;margin:0 auto .5rem}
+  .pdf-static-caption{font-size:8pt;color:#666;font-style:italic;text-align:center;margin-top:.3rem}
+  .pdf-step-block{border:1px solid #ddd;padding:.8rem 1rem;margin-bottom:.7rem;break-inside:avoid;background:#fafafa}
+  .pdf-step-num{font-family:'Courier New',monospace;font-size:7.5pt;color:#b87333;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.2rem}
+  .pdf-step-title{font-family:Georgia,serif;font-size:11pt;color:#1a6b5a;font-weight:bold;margin-bottom:.5rem}
+  .pdf-step-block p{font-size:9.5pt;color:#333;line-height:1.6;margin-bottom:.4rem}
+  .pdf-code{font-family:'Courier New',monospace;font-size:7pt;background:#f4f0e8;border-left:3px solid #d4a017;padding:.6rem .8rem;white-space:pre;overflow:hidden;line-height:1.55;color:#1a1008;display:block;margin:.4rem 0;word-break:break-all;white-space:pre-wrap}
+  .pdf-map-table{width:100%;border-collapse:collapse;font-size:9pt;margin:.5rem 0}
+  .pdf-map-table th{background:#1a6b5a;color:white;padding:.4rem .6rem;text-align:center}
+  .pdf-map-table td{padding:.35rem .6rem;border:1px solid #ccc;text-align:center}
+  .pdf-map-table tr:nth-child(even) td{background:#f0f0e8}
+  .portada-hero::after{content:"TSP — Ramificación y Acotamiento | El Viaje Perfecto";display:block;font-family:Georgia,serif;font-size:.8rem;color:#888;text-align:center;margin-top:1rem}
+  @page{margin:1.5cm;size:A4}
+}
+
+/* pdf-static-block is ALWAYS hidden on screen — only visible during print */
+#pdf-static-block{display:none}
 </style>
 </head>
 <body>
@@ -205,25 +342,67 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(26,1
 <div id="cur"></div>
 <div id="cur-ring"></div>
 
+<!-- PDF FAB BUTTON -->
+<button id="pdf-fab" onclick="openPdfModal()" title="Descargar como PDF">
+  <span class="pdf-ico">📄</span> Descargar PDF
+</button>
+
+<!-- PDF MODAL -->
+<div id="pdf-modal">
+  <div id="pdf-modal-bg" onclick="closePdfModal()"></div>
+  <div id="pdf-modal-box">
+    <h2>📄 Descargar como PDF</h2>
+    <p>Selecciona las secciones que deseas incluir en el PDF. El cuestionario no está disponible para descarga.</p>
+    <div class="pdf-sections">
+      <label class="pdf-sec-item">
+        <input type="checkbox" id="chk-portada" checked>
+        <div class="pdf-sec-label">Portada<span>Presentación y objetivos del recurso</span></div>
+      </label>
+      <label class="pdf-sec-item">
+        <input type="checkbox" id="chk-introduccion" checked>
+        <div class="pdf-sec-label">Introducción<span>Conceptos, TSP, Branch & Bound y algoritmo</span></div>
+      </label>
+      <label class="pdf-sec-item">
+        <input type="checkbox" id="chk-desarrollo" checked>
+        <div class="pdf-sec-label">Desarrollo<span>Problema, resolución paso a paso y árbol B&B</span></div>
+      </label>
+      <label class="pdf-sec-item">
+        <input type="checkbox" id="chk-conclusiones" checked>
+        <div class="pdf-sec-label">Conclusiones<span>Ventajas, limitaciones y comparación de métodos</span></div>
+      </label>
+      <label class="pdf-sec-item">
+        <input type="checkbox" id="chk-referencias" checked>
+        <div class="pdf-sec-label">Referencias<span>Fuentes académicas en formato APA 7ª ed.</span></div>
+      </label>
+    </div>
+    <div class="pdf-modal-btns">
+      <button class="pdf-go" onclick="executePrint()">⬇ Generar PDF</button>
+      <button class="pdf-cancel" onclick="closePdfModal()">Cancelar</button>
+    </div>
+    <div class="pdf-note">
+      ℹ️ Se abrirá el diálogo de impresión del navegador. Selecciona "Guardar como PDF" como destino. Para mejor resultado usa Chrome o Edge. El cuestionario interactivo no se incluye en el PDF.
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-logo">🧭 Viaje Óptimo · TSP</div>
   <ul class="nav-links">
-    <li><a href="#" onclick="goTo('portada');return false" id="nav-portada" class="active">Portada</a></li>
-    <li><a href="#" onclick="goTo('introduccion');return false" id="nav-introduccion">Introducción</a></li>
-    <li><a href="#" onclick="goTo('desarrollo');return false" id="nav-desarrollo">Desarrollo</a></li>
-    <li><a href="#" onclick="goTo('conclusiones');return false" id="nav-conclusiones">Conclusiones</a></li>
-    <li><a href="#" onclick="goTo('referencias');return false" id="nav-referencias">Referencias</a></li>
+    <li><a href="#" onclick="goTo('portada');return false"      id="nav-portada"      class="active">Portada</a></li>
+    <li><a href="#" onclick="goTo('introduccion');return false" id="nav-introduccion"            >Intro</a></li>
+    <li><a href="#" onclick="goTo('desarrollo');return false"   id="nav-desarrollo"              >Desarrollo</a></li>
+    <li><a href="#" onclick="goTo('conclusiones');return false" id="nav-conclusiones"            >Conclusiones</a></li>
+    <li><a href="#" onclick="goTo('referencias');return false"  id="nav-referencias"             >Referencias</a></li>
+    <li><a href="#" onclick="goTo('cuestionario');return false" id="nav-cuestionario"            >Quiz</a></li>
   </ul>
 </nav>
 
-<!-- ═══════════════════════════════════════════════ PORTADA -->
+<!-- ═══════════════ PORTADA ═══════════════ -->
 <section id="portada" class="page active">
-
   <div class="portada-hero">
     <canvas id="star-c"></canvas>
     <canvas id="grid-c"></canvas>
-
     <div class="cmp">
       <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <circle cx="100" cy="100" r="94" fill="none" stroke="rgba(212,160,23,.7)" stroke-width="1.5"/>
@@ -239,7 +418,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(26,1
         <text x="184" y="104" fill="rgba(245,234,216,.45)" font-size="9" font-family="monospace">E</text>
       </svg>
     </div>
-
     <div class="hero-inner">
       <div class="eyebrow">Investigación de Operaciones · Optimización Combinatoria</div>
       <h1 class="hero-title">El <em>Viaje</em><br>Perfecto</h1>
@@ -252,187 +430,216 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(26,1
       </div>
       <div class="cta-row">
         <a class="btn-gold" href="#" onclick="goTo('introduccion');return false">Comenzar el Viaje →</a>
-        <a class="btn-out"  href="#" onclick="goTo('desarrollo');return false">Ver Solución</a>
       </div>
     </div>
-
-    <div class="scroll-ind">
-      <span>Explorar</span>
-      <svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 0v17M1 11l6 6 6-6" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
-    </div>
+    <div class="scroll-ind"><span>Explorar</span><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 0v17M1 11l6 6 6-6" stroke="currentColor" stroke-width="1.8" fill="none"/></svg></div>
   </div>
 
-  <div class="p-obj">
-    <div class="inner">
-      <div class="slabel">Propósito del recurso didáctico</div>
-      <h2 class="stitle">¿Por qué existe esta página?</h2>
-      <div class="obj-grid">
-        <div class="obj-card"><div class="obj-n">01</div><h3>Comprender el método</h3><p>Explicar de forma clara y visual la técnica de Ramificación y Acotamiento aplicada al TSP, desde fundamentos matemáticos hasta su implementación.</p></div>
-        <div class="obj-card"><div class="obj-n">02</div><h3>Resolver un problema original</h3><p>Formular y resolver paso a paso un problema de ruteo entre 5 ciudades mexicanas, mostrando cada cálculo con la reducción de matriz.</p></div>
-        <div class="obj-card"><div class="obj-n">03</div><h3>Visualizar el algoritmo</h3><p>Animar el árbol de decisiones, las rutas sobre un mapa y el proceso de poda para que el algoritmo sea intuitivo y comprensible.</p></div>
-        <div class="obj-card"><div class="obj-n">04</div><h3>Comparar métodos</h3><p>Contrastar Branch & Bound con planos de corte, programación entera general y otros métodos, identificando ventajas y limitaciones.</p></div>
-      </div>
+  <div class="p-obj"><div class="inner">
+    <div class="slabel">Propósito del recurso didáctico</div>
+    <h2 class="stitle">¿Por qué existe esta página?</h2>
+    <div class="obj-grid">
+      <div class="obj-card"><div class="obj-n">01</div><h3>Comprender el método</h3><p>Explicar de forma clara y visual la técnica de Ramificación y Acotamiento aplicada al TSP, desde fundamentos matemáticos hasta su implementación.</p></div>
+      <div class="obj-card"><div class="obj-n">02</div><h3>Resolver un problema original</h3><p>Formular y resolver la gira nacional de <strong>Café Tacvba</strong> entre 5 ciudades mexicanas, mostrando cada cálculo del método B&amp;B con reducción de matriz.</p></div>
+      <div class="obj-card"><div class="obj-n">03</div><h3>Visualizar el algoritmo</h3><p>Animar el árbol de decisiones, las rutas sobre un mapa y el proceso de poda para que el algoritmo sea intuitivo y comprensible.</p></div>
+      <div class="obj-card"><div class="obj-n">04</div><h3>Comparar métodos</h3><p>Contrastar Branch &amp; Bound con planos de corte, programación entera general y otros métodos, identificando ventajas y limitaciones.</p></div>
     </div>
-  </div>
+  </div></div>
 
-  <div class="p-idx">
-    <div class="inner">
-      <div class="slabel" style="color:var(--copper)">Contenido</div>
-      <h2 class="stitle lt">Estructura del recurso</h2>
-      <div class="idx-grid">
-        <div class="idx-card"><div class="idx-n">Sección 01</div><h3>Introducción</h3><p>Contexto de la PI, conceptos de B&B, lógica del algoritmo y árbol preview animado.</p><a class="go" href="#" onclick="goTo('introduccion');return false">Explorar →</a></div>
-        <div class="idx-card"><div class="idx-n">Sección 02</div><h3>Desarrollo</h3><p>Problema original, árbol B&B animado con 13 nodos, mapa de rutas y resolución paso a paso.</p><a class="go" href="#" onclick="goTo('desarrollo');return false">Explorar →</a></div>
-        <div class="idx-card"><div class="idx-n">Sección 03</div><h3>Conclusiones</h3><p>Ventajas, limitaciones y tabla comparativa con 5 métodos de programación entera.</p><a class="go" href="#" onclick="goTo('conclusiones');return false">Explorar →</a></div>
-        <div class="idx-card"><div class="idx-n">Sección 04</div><h3>Referencias</h3><p>11 fuentes académicas en formato APA 7ª edición: libros, artículos y materiales universitarios.</p><a class="go" href="#" onclick="goTo('referencias');return false">Explorar →</a></div>
-      </div>
+  <div class="p-idx"><div class="inner">
+    <div class="slabel" style="color:var(--copper)">Contenido</div>
+    <h2 class="stitle lt">Estructura del recurso</h2>
+    <div class="idx-grid">
+      <div class="idx-card"><div class="idx-n">Sección 01</div><h3>Introducción</h3><p>Contexto de la PI, conceptos de B&amp;B, lógica del algoritmo y árbol preview animado.</p><a class="go" href="#" onclick="goTo('introduccion');return false">Explorar →</a></div>
+      <div class="idx-card"><div class="idx-n">Sección 02</div><h3>Desarrollo</h3><p>🎸 Gira de Café Tacvba: árbol B&amp;B con 13 nodos animados, mapa de rutas interactivo y resolución paso a paso.</p><a class="go" href="#" onclick="goTo('desarrollo');return false">Explorar →</a></div>
+      <div class="idx-card"><div class="idx-n">Sección 03</div><h3>Conclusiones</h3><p>Ventajas, limitaciones y tabla comparativa con 5 métodos de programación entera.</p><a class="go" href="#" onclick="goTo('conclusiones');return false">Explorar →</a></div>
+      <div class="idx-card"><div class="idx-n">Sección 04</div><h3>Referencias</h3><p>11 fuentes académicas en formato APA 7ª edición.</p><a class="go" href="#" onclick="goTo('referencias');return false">Explorar →</a></div>
+      <div class="idx-card"><div class="idx-n">📝 Evaluación</div><h3>Cuestionario</h3><p>10 preguntas de opción múltiple para evaluar tu comprensión del método B&amp;B para TSP.</p><a class="go" href="#" onclick="goTo('cuestionario');return false">Poner a prueba →</a></div>
     </div>
-  </div>
-
+  </div></div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
 </section>
 
-<!-- ═══════════════════════════════════════════════ INTRODUCCIÓN -->
+<!-- ═══════════════ INTRODUCCIÓN ═══════════════ -->
 <section id="introduccion" class="page">
-
   <div class="sec-hero dark">
     <div class="slabel" style="color:var(--copper)">Sección 01</div>
     <h1>Introducción al Método</h1>
     <p>Antes de embarcarnos en el viaje, necesitamos entender el mapa, los instrumentos y la brújula que guiarán nuestra ruta óptima.</p>
   </div>
-
   <div class="intro-body">
-
     <div class="cblock">
-      <h2>🗺️ Programación Entera y Optimización Combinatoria</h2>
-      <p>La <strong>programación entera (PI)</strong> es una rama de la optimización matemática donde algunas o todas las variables de decisión deben tomar valores enteros. A diferencia de la programación lineal continua, esta restricción convierte los problemas en retos computacionales de clase NP-difícil.</p>
-      <p>Sus aplicaciones cubren logística de flotas, diseño de redes, asignación de recursos y planificación de rutas de entrega, entre muchas otras áreas industriales y de servicios.</p>
-      <div class="kquote">"La programación entera modela decisiones discretas del mundo real: ¿qué ruta tomar?, ¿qué ciudades visitar?, ¿en qué orden?, ¿cuántas unidades producir?"</div>
-      <ul>
-        <li><strong>PI Pura:</strong> todas las variables deben ser enteras.</li>
-        <li><strong>PI Mixta:</strong> algunas variables son continuas y otras enteras.</li>
-        <li><strong>PI Binaria:</strong> las variables toman solo valores 0 ó 1 (sí / no).</li>
-      </ul>
+      <h2>Programación Entera y Optimización Combinatoria</h2>
+      <p>La <strong>programación entera (PI)</strong> es una rama de la optimización matemática donde algunas o todas las variables deben tomar valores enteros. Esta restricción convierte los problemas en retos computacionales de clase NP-difícil.</p>
+      <p>Sus aplicaciones incluyen logística, diseño de redes, asignación de recursos y planificación de rutas de entrega.</p>
+      <div class="kquote">"La programación entera modela decisiones discretas del mundo real: ¿qué ruta tomar?, ¿qué ciudades visitar?, ¿en qué orden?"</div>
+      <ul><li><strong>PI Pura:</strong> todas las variables deben ser enteras.</li><li><strong>PI Mixta:</strong> algunas continuas, otras enteras.</li><li><strong>PI Binaria:</strong> variables 0 ó 1 (sí / no).</li></ul>
     </div>
-
     <div class="cblock">
-      <h2>✈️ El Problema del Agente Viajero (TSP)</h2>
-      <p>El <strong>Problema del Agente Viajero</strong> (<em>Travelling Salesman Problem</em> – TSP) es uno de los problemas combinatorios más estudiados. Un agente debe visitar exactamente una vez cada ciudad de un conjunto dado, regresar al origen, y minimizar la distancia total.</p>
-      <div class="fbox">Minimizar: Z = Σ<sub>i</sub> Σ<sub>j</sub> c<sub>ij</sub> · x<sub>ij</sub><br>
-s.a.: Σ<sub>j≠i</sub> x<sub>ij</sub> = 1 ∀i  |  Σ<sub>i≠j</sub> x<sub>ij</sub> = 1 ∀j  |  x<sub>ij</sub> ∈ {0,1}</div>
-      <p>Con <em>n</em> ciudades, el número de rutas posibles es <strong>(n−1)! / 2</strong>. Para n = 20 ya son más de 60 mil millones de rutas — inviable por fuerza bruta. Branch & Bound lo resuelve de forma exacta y eficiente.</p>
+      <h2>El Problema del Agente Viajero (TSP)</h2>
+      <p>El <strong>TSP</strong> busca la ruta de menor costo que visita cada ciudad exactamente una vez y regresa al origen.</p>
+      <div class="fbox">Minimizar: Z = Σ<sub>i</sub> Σ<sub>j</sub> c<sub>ij</sub> · x<sub>ij</sub><br>s.a.: Σ<sub>j≠i</sub> x<sub>ij</sub>=1 ∀i  |  Σ<sub>i≠j</sub> x<sub>ij</sub>=1 ∀j  |  x<sub>ij</sub>∈{0,1}</div>
+      <p>Con <em>n</em> ciudades, hay <strong>(n−1)!/2</strong> rutas posibles. Para n=20 son más de 60 mil millones — inviable por fuerza bruta.</p>
     </div>
-
     <div class="cblock">
-      <h2>🌳 Ramificación y Acotamiento (Branch & Bound)</h2>
-      <p>Branch & Bound es un paradigma algorítmico que resuelve problemas de optimización combinatoria mediante tres operaciones clave:</p>
+      <h2>Ramificación y Acotamiento (Branch &amp; Bound)</h2>
       <ol class="asteps">
-        <li><strong>Ramificación (Branch):</strong> Dividir el espacio de soluciones en subproblemas, creando un árbol de búsqueda. Cada nodo representa un subconjunto de rutas con decisiones ya tomadas.</li>
-        <li><strong>Acotamiento (Bound):</strong> Calcular una cota inferior (lower bound) para cada nodo. Si esa cota ≥ mejor solución conocida, el nodo se poda — no puede contener el óptimo.</li>
-        <li><strong>Poda (Prune):</strong> Eliminar ramas del árbol que no pueden mejorar la solución actual, reduciendo drásticamente el espacio de búsqueda.</li>
-        <li><strong>Actualizar bound:</strong> Cuando se halla una solución completa, se actualiza el límite superior, permitiendo podar más nodos en adelante.</li>
-        <li><strong>Selección de nodo:</strong> Elegir qué nodo explorar (estrategias: best-first, depth-first, breadth-first).</li>
+        <li><strong>Ramificación (Branch):</strong> Dividir el espacio de soluciones en subproblemas, creando un árbol de búsqueda donde cada nodo representa decisiones ya tomadas.</li>
+        <li><strong>Acotamiento (Bound):</strong> Calcular una cota inferior (LB) para cada nodo. Si LB ≥ mejor solución conocida, el nodo se poda.</li>
+        <li><strong>Poda (Prune):</strong> Eliminar ramas que no pueden mejorar la solución actual.</li>
+        <li><strong>Actualizar bound:</strong> Al encontrar una solución completa, actualizar el límite superior.</li>
+        <li><strong>Selección:</strong> Elegir qué nodo explorar (best-first, depth-first).</li>
       </ol>
-      <div class="kquote">"Branch & Bound garantiza el óptimo global sin evaluar todas las soluciones, gracias a la poda inteligente de ramas subóptimas o infeasibles."</div>
+      <div class="kquote">"Branch &amp; Bound garantiza el óptimo global sin evaluar todas las soluciones, gracias a la poda inteligente."</div>
     </div>
-
     <div class="cblock">
-      <h2>🧮 Cota Inferior: Reducción de Matriz de Costos</h2>
-      <p>La cota inferior más efectiva para TSP es la <strong>reducción de matriz</strong> (Little et al., 1963):</p>
+      <h2>Cota Inferior: Reducción de Matriz</h2>
       <ol class="asteps">
-        <li>Restar el mínimo de cada fila a todos sus elementos. Registrar la suma de mínimos.</li>
-        <li>Restar el mínimo de cada columna a todos sus elementos. Sumar al registro.</li>
-        <li>La suma acumulada es la cota inferior. Ninguna ruta puede costar menos.</li>
-        <li>Al incluir un arco (i,j): eliminar fila i y columna j, poner ∞ en (j,i) para prevenir subtours, reducir la submatriz resultante.</li>
+        <li>Restar el mínimo de cada fila a todos sus elementos. Registrar la suma.</li>
+        <li>Restar el mínimo de cada columna. Sumar al registro.</li>
+        <li>La suma acumulada es la cota inferior.</li>
+        <li>Al incluir arco (i,j): eliminar fila i y col j, poner ∞ en (j,i) para prevenir subtours.</li>
       </ol>
-      <div class="fbox">LB(nodo hijo) = LB(padre) + costo_reducido(arco) + nueva_reducción(submatriz)</div>
+      <div class="fbox">LB(hijo) = LB(padre) + costo_reducido(arco) + nueva_reducción(submatriz)</div>
     </div>
-
     <div class="tree-prev">
-      <h3>Estructura del árbol de Branch & Bound para TSP</h3>
+      <h3>Estructura del árbol de Branch &amp; Bound para TSP</h3>
       <canvas id="intro-tree" height="290"></canvas>
       <br><button class="mbtn" onclick="drawIntroTree()" style="margin-top:1rem">▶ Reanimar árbol</button>
     </div>
-
     <div class="cblock">
-      <h2>🔍 Lógica del Algoritmo Completo</h2>
+      <h2>Lógica del Algoritmo Completo</h2>
       <ol class="asteps">
-        <li>Reducir la matriz de costos completa. Suma de reducción = LB nodo raíz.</li>
-        <li>Insertar el nodo raíz en la cola de prioridad (ordenada por LB ascendente).</li>
-        <li>Extraer el nodo con menor LB de la cola (best-first search).</li>
-        <li>Para cada arco (i,j) posible, calcular LB del hijo. Si LB hijo &lt; mejor solución actual, agregar a la cola.</li>
-        <li>Si el nodo representa una ruta completa (n ciudades), actualizar la mejor solución.</li>
+        <li>Reducir la matriz completa. Suma = LB raíz.</li>
+        <li>Insertar nodo raíz en cola de prioridad (por LB).</li>
+        <li>Extraer nodo con menor LB (best-first).</li>
+        <li>Para cada arco posible, calcular LB del hijo. Si LB hijo &lt; mejor solución, agregar a cola.</li>
+        <li>Si el nodo es una ruta completa (n ciudades), actualizar mejor solución.</li>
         <li>Repetir desde paso 3 hasta que la cola esté vacía.</li>
         <li>La mejor solución registrada es el <strong>óptimo global garantizado</strong>.</li>
       </ol>
     </div>
-
   </div>
+  <div class="page-nav light">
+    <a href="#" class="pnav-btn prev" onclick="goTo('portada');return false">← Portada</a>
+    <span class="page-nav-center">Sección 01 / 05</span>
+    <a href="#" class="pnav-btn next" onclick="goTo('desarrollo');return false">Desarrollo →</a>
+  </div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
 </section>
 
-<!-- ═══════════════════════════════════════════════ DESARROLLO -->
+<!-- ═══════════════ DESARROLLO ═══════════════ -->
 <section id="desarrollo" class="page">
-
   <div class="sec-hero teal">
     <div class="slabel" style="color:rgba(255,255,255,.6)">Sección 02</div>
-    <h1>Desarrollo: Resolución del Problema</h1>
-    <p>Un representante comercial debe recorrer 5 ciudades mexicanas partiendo desde CDMX. Encontremos la ruta mínima garantizada.</p>
+    <h1>La Gira de Café Tacvba</h1>
+    <p>La legendaria banda mexicana organiza su gira nacional. ¿Cuál es la ruta más corta para recorrer México sin perder tiempo ni kilómetros?</p>
   </div>
-
   <div class="dev-body">
+
+    <!-- Banda intro card -->
+    <div class="card" style="border-left:5px solid var(--gold);box-shadow:6px 6px 0 var(--gold);background:linear-gradient(135deg,#fff 80%,#fdf6e3 100%)">
+      <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--copper);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.3rem">El Contexto Musical</div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--ink);margin:0">Café Tacvba — Gira México 2025</h2>
+        </div>
+      </div>
+      <p style="color:#444;line-height:1.82;margin-bottom:.7rem"><strong>Café Tacvba</strong> es una de las bandas de rock alternativo más icónicas de México y América Latina. Formada en 1987 en Ciudad de México, su música mezcla rock, electrónica, música regional y experimentación. Con álbumes como <em>Re</em> (1994) y <em>Cuatro Caminos</em> (2003), se han consagrado como referentes del rock en español.</p>
+      <p style="color:#444;line-height:1.82">Para su gira nacional <strong>"Cuatro Caminos: La Vuelta"</strong>, la banda debe visitar <strong>cinco ciudades clave de México</strong> partiendo y regresando a su ciudad base: Ciudad de México. El manager de la banda necesita encontrar la ruta que minimice los kilómetros recorridos en autobús de gira para reducir costos de traslado y tiempo de viaje entre conciertos.</p>
+    </div>
 
     <!-- Planteamiento -->
     <div class="card cs">
-      <h2 class="tc">📋 1. Planteamiento del Problema</h2>
+      <h2 class="tc">1. Planteamiento del Problema</h2>
       <div class="pgrid">
         <div class="psec">
-          <h3>Contexto</h3>
-          <p>Un representante comercial debe visitar las ciudades de <strong>CDMX, Guadalajara, Monterrey, Puebla y Querétaro</strong>, partiendo y regresando a Ciudad de México. Se conocen las distancias en kilómetros entre todas las ciudades.</p>
-          <p><strong>Objetivo:</strong> Minimizar la distancia total del recorrido visitando cada ciudad exactamente una vez.</p>
+          <h3>Contexto de la Gira</h3>
+          <p>Café Tacvba realizará <strong>un concierto en cada ciudad</strong>: Ciudad de México, Guadalajara, Monterrey, Puebla y Querétaro. El autobús de la banda parte desde CDMX, recorre las 5 sedes y regresa al punto de origen al finalizar la gira.</p>
+          <p><strong>Objetivo:</strong> Determinar el orden de las ciudades que minimice la distancia total recorrida por el autobús de la banda, visitando cada ciudad exactamente una vez.</p>
+          <p style="margin-top:.8rem;padding:.7rem 1rem;background:rgba(26,107,90,.07);border-left:3px solid var(--teal);font-size:.93rem;color:#444">
+            <em>Este problema es exactamente un Problema del Agente Viajero (TSP), donde la "banda" hace el papel del agente y las "sedes de concierto" son las ciudades a visitar.</em>
+          </p>
         </div>
         <div class="psec">
           <h3>Variables de Decisión</h3>
           <ul>
-            <li><strong>x<sub>ij</sub> ∈ {0,1}</strong>: = 1 si se viaja de ciudad i a ciudad j</li>
-            <li>1=CDMX | 2=GDL | 3=MTY | 4=PUE | 5=QRO</li>
+            <li><strong>x<sub>ij</sub> ∈ {0,1}</strong>: = 1 si el autobús viaja directamente de la ciudad <em>i</em> a la ciudad <em>j</em></li>
+            <li>= 0 en caso contrario</li>
           </ul>
-          <h3 style="margin-top:1.1rem">Función Objetivo</h3>
+          <p style="margin-top:.8rem;font-family:'Space Mono',monospace;font-size:.78rem;background:#f5ead8;padding:.7rem;line-height:1.8">
+            1 = CDMX &nbsp;|&nbsp; 2 = GDL<br>
+            3 = MTY &nbsp;&nbsp;|&nbsp; 4 = PUE<br>
+            5 = QRO
+          </p>
+          <h3 style="margin-top:1rem">Función Objetivo</h3>
           <p>Min Z = Σ<sub>i</sub>Σ<sub>j</sub> d<sub>ij</sub> · x<sub>ij</sub></p>
-          <h3 style="margin-top:1.1rem">Restricciones</h3>
+          <h3 style="margin-top:1rem">⚠️ Restricciones</h3>
           <ul>
-            <li>Cada ciudad se visita exactamente una vez</li>
-            <li>Cada ciudad se abandona exactamente una vez</li>
-            <li>Eliminación de subtours</li>
+            <li>Cada sede se visita exactamente una vez: Σ<sub>j</sub> x<sub>ij</sub> = 1 ∀i</li>
+            <li>Cada sede se abandona exactamente una vez: Σ<sub>i</sub> x<sub>ij</sub> = 1 ∀j</li>
+            <li>Eliminación de subtours (no ciclos parciales)</li>
             <li>x<sub>ij</sub> ∈ {0,1} para todo i,j</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- Matriz -->
+    <!-- Sedes -->
     <div class="card cg">
-      <h2>📐 2. Matriz de Distancias (km)</h2>
-      <p style="color:#555;margin-bottom:1.2rem">Distancias aproximadas por carretera entre las 5 ciudades mexicanas.</p>
+      <h2>2. Sedes de la Gira y Distancias (km)</h2>
+      <p style="color:#555;margin-bottom:1.4rem">Distancias aproximadas en kilómetros por carretera entre las 5 ciudades sede. El autobús de Café Tacvba recorrerá estas rutas entre cada concierto.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;margin-bottom:1.6rem">
+        <div style="background:var(--ink);color:var(--gold);padding:1rem;text-align:center;border-radius:2px">
+          <div style="font-size:1.6rem">🏙️</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;margin-top:.3rem">CDMX</div>
+          <div style="font-size:.78rem;color:rgba(245,234,216,.5);margin-top:.2rem">Ciudad base</div>
+        </div>
+        <div style="background:rgba(26,107,90,.12);color:var(--teal);padding:1rem;text-align:center;border-radius:2px;border:1px solid rgba(26,107,90,.25)">
+          <div style="font-size:1.6rem">🎶</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;margin-top:.3rem">GUADALAJARA</div>
+          <div style="font-size:.78rem;color:#666;margin-top:.2rem">Sede 2</div>
+        </div>
+        <div style="background:rgba(26,107,90,.12);color:var(--teal);padding:1rem;text-align:center;border-radius:2px;border:1px solid rgba(26,107,90,.25)">
+          <div style="font-size:1.6rem">🎵</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;margin-top:.3rem">MONTERREY</div>
+          <div style="font-size:.78rem;color:#666;margin-top:.2rem">Sede 3</div>
+        </div>
+        <div style="background:rgba(26,107,90,.12);color:var(--teal);padding:1rem;text-align:center;border-radius:2px;border:1px solid rgba(26,107,90,.25)">
+          <div style="font-size:1.6rem">🎸</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;margin-top:.3rem">PUEBLA</div>
+          <div style="font-size:.78rem;color:#666;margin-top:.2rem">Sede 4</div>
+        </div>
+        <div style="background:rgba(26,107,90,.12);color:var(--teal);padding:1rem;text-align:center;border-radius:2px;border:1px solid rgba(26,107,90,.25)">
+          <div style="font-size:1.6rem">🥁</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;margin-top:.3rem">QUERÉTARO</div>
+          <div style="font-size:.78rem;color:#666;margin-top:.2rem">Sede 5</div>
+        </div>
+      </div>
       <div class="mwrap">
         <table class="dtab">
-          <thead><tr><th>Ciudad</th><th>CDMX(1)</th><th>GDL(2)</th><th>MTY(3)</th><th>PUE(4)</th><th>QRO(5)</th></tr></thead>
+          <thead><tr><th>🚌 De \ Hacia</th><th>CDMX (1)</th><th>GDL (2)</th><th>MTY (3)</th><th>PUE (4)</th><th>QRO (5)</th></tr></thead>
           <tbody>
-            <tr><td><strong>CDMX(1)</strong></td><td class="dg">∞</td><td>540</td><td>920</td><td>130</td><td>200</td></tr>
-            <tr><td><strong>GDL(2)</strong></td><td>540</td><td class="dg">∞</td><td>460</td><td>670</td><td>340</td></tr>
-            <tr><td><strong>MTY(3)</strong></td><td>920</td><td>460</td><td class="dg">∞</td><td>1050</td><td>730</td></tr>
-            <tr><td><strong>PUE(4)</strong></td><td>130</td><td>670</td><td>1050</td><td class="dg">∞</td><td>330</td></tr>
-            <tr><td><strong>QRO(5)</strong></td><td>200</td><td>340</td><td>730</td><td>330</td><td class="dg">∞</td></tr>
+            <tr><td><strong>CDMX (1)</strong></td><td class="dg">∞</td><td>540</td><td>920</td><td>130</td><td>200</td></tr>
+            <tr><td><strong>GDL (2)</strong></td><td>540</td><td class="dg">∞</td><td>460</td><td>670</td><td>340</td></tr>
+            <tr><td><strong>MTY (3)</strong></td><td>920</td><td>460</td><td class="dg">∞</td><td>1050</td><td>730</td></tr>
+            <tr><td><strong>PUE (4)</strong></td><td>130</td><td>670</td><td>1050</td><td class="dg">∞</td><td>330</td></tr>
+            <tr><td><strong>QRO (5)</strong></td><td>200</td><td>340</td><td>730</td><td>330</td><td class="dg">∞</td></tr>
           </tbody>
         </table>
       </div>
+      <p style="color:#666;font-size:.88rem;margin-top:.9rem;font-style:italic">* La diagonal es ∞ porque el autobús no viaja de una ciudad a sí misma. Las distancias son por carretera federal aproximadas.</p>
     </div>
 
     <!-- Mapa -->
     <div class="card ck">
-      <h2>🗺️ 3. Mapa Interactivo de Rutas</h2>
+      <h2>3. Mapa de la Gira — Rutas Interactivas</h2>
+      <p style="color:#555;margin-bottom:1rem">Visualiza todas las rutas posibles o anima el recorrido óptimo del autobús de Café Tacvba entre las sedes.</p>
       <div id="map-wrap"><canvas id="map-canvas"></canvas></div>
       <div class="btn-row">
         <button class="mbtn" onclick="mapShowAll()">🕸 Todas las rutas</button>
         <button class="mbtn" onclick="mapShowOptimal()">⭐ Ruta óptima</button>
-        <button class="mbtn" onclick="mapAnimate()">▶ Animar recorrido</button>
+        <button class="mbtn" onclick="mapAnimate()">🎸 Animar gira</button>
         <button class="mbtn rd" onclick="mapClear()">✕ Limpiar</button>
       </div>
       <div id="map-status"></div>
@@ -440,262 +647,278 @@ s.a.: Σ<sub>j≠i</sub> x<sub>ij</sub> = 1 ∀i  |  Σ<sub>i≠j</sub> x<sub>ij
 
     <!-- Pasos -->
     <div class="card cs">
-      <h2>🧮 4. Resolución Paso a Paso</h2>
+      <h2>4. Resolución Paso a Paso con Branch &amp; Bound</h2>
+      <p style="color:#555;margin-bottom:1.2rem">Aplicamos el método de Ramificación y Acotamiento para encontrar la ruta de menor kilometraje para el autobús de la banda.</p>
       <div class="stabs">
         <button class="stab active" onclick="showStep(0,this)">Paso 0: Raíz</button>
         <button class="stab"        onclick="showStep(1,this)">Paso 1: Reducción</button>
         <button class="stab"        onclick="showStep(2,this)">Paso 2: Ramificar</button>
-        <button class="stab"        onclick="showStep(3,this)">Paso 3: Evaluar N1</button>
+        <button class="stab"        onclick="showStep(3,this)">Paso 3: Eval N1</button>
         <button class="stab"        onclick="showStep(4,this)">Paso 4: Profundizar</button>
         <button class="stab"        onclick="showStep(5,this)">Paso 5: Óptimo</button>
       </div>
+
       <div id="sp0" class="spanel active">
-        <h3>Paso 0 — Nodo Raíz: Matriz Inicial</h3>
-        <p>Comenzamos con la matriz de costos completa. El nodo raíz representa el espacio completo de todas las rutas posibles — ninguna decisión tomada aún.</p>
-        <div class="code">Matriz de costos inicial C[5×5]:
+        <h3>Paso 0 — Nodo Raíz: Construimos la Matriz Inicial</h3>
+        <p>El manager de Café Tacvba presenta la matriz de distancias entre las 5 ciudades sede. El <strong>nodo raíz</strong> del árbol B&B representa el espacio completo de posibles itinerarios — todavía no se ha decidido el orden de visita de ninguna ciudad.</p>
+        <div class="code">Matriz de costos de la gira C[5×5] (km):
+          CDMX  GDL   MTY   PUE   QRO
+CDMX (1) [  ∞    540   920   130   200 ]
+GDL  (2) [ 540    ∞    460   670   340 ]
+MTY  (3) [ 920   460    ∞   1050   730 ]
+PUE  (4) [ 130   670  1050    ∞    330 ]
+QRO  (5) [ 200   340   730   330    ∞  ]
 
-       1     2     3     4     5
-1  [  ∞    540   920   130   200 ]
-2  [ 540    ∞    460   670   340 ]
-3  [ 920   460    ∞   1050   730 ]
-4  [ 130   670  1050    ∞    330 ]
-5  [ 200   340   730   330    ∞  ]
-
-Estado: ruta = ∅  |  LB = pendiente de cálculo</div>
+Itinerario actual: sin definir (∅)
+Cota inferior (LB): pendiente de cálculo
+Rutas posibles: (5-1)!/2 = 12 itinerarios distintos</div>
       </div>
+
       <div id="sp1" class="spanel">
         <h3>Paso 1 — Reducción de Filas y Columnas</h3>
-        <p>Para obtener la <strong>cota inferior del nodo raíz</strong>, reducimos la matriz: restamos el mínimo de cada fila y luego el mínimo de cada columna.</p>
-        <div class="code">── REDUCCIÓN DE FILAS ──────────────────────────────
-Fila 1: mín(540,920,130,200) = 130  → restar 130
-Fila 2: mín(540,460,670,340) = 340  → restar 340
-Fila 3: mín(920,460,1050,730) = 460 → restar 460
-Fila 4: mín(130,670,1050,330) = 130 → restar 130
-Fila 5: mín(200,340,730,330) = 200  → restar 200
-                               ─────────────────
-        Σ reducción filas = 130+340+460+130+200 = 1260
+        <p>Para obtener la <strong>cota inferior del nodo raíz</strong>, reducimos la matriz: restamos el mínimo de cada fila (la distancia mínima que el autobús pagará al salir de cada ciudad) y luego el mínimo de cada columna (la mínima al llegar).</p>
+        <div class="code">── REDUCCIÓN DE FILAS (mínimo costo de salida de cada sede) ──
+Fila 1 (CDMX): mín(540, 920, 130, 200) = 130  → restar 130
+Fila 2 (GDL):  mín(540, 460, 670, 340) = 340  → restar 340
+Fila 3 (MTY):  mín(920, 460,1050, 730) = 460  → restar 460
+Fila 4 (PUE):  mín(130, 670,1050, 330) = 130  → restar 130
+Fila 5 (QRO):  mín(200, 340, 730, 330) = 200  → restar 200
+                                          ─────────────────
+                           Σ filas = 130+340+460+130+200 = 1,260 km
 
 Matriz tras reducción de filas:
-       1     2     3     4     5
-1  [  ∞    410   790     0    70 ]
-2  [ 200    ∞    120   330     0 ]
-3  [ 460     0    ∞    590   270 ]
-4  [   0   540   920    ∞    200 ]
-5  [   0   140   530   130    ∞  ]
+          CDMX  GDL   MTY   PUE   QRO
+CDMX (1) [  ∞    410   790     0    70 ]
+GDL  (2) [ 200    ∞    120   330     0 ]
+MTY  (3) [ 460     0    ∞    590   270 ]
+PUE  (4) [   0   540   920    ∞    200 ]
+QRO  (5) [   0   140   530   130    ∞  ]
 
-── REDUCCIÓN DE COLUMNAS ──────────────────────────
-Col 1: mín(200,460,0,0)    =   0 → restar   0
-Col 2: mín(410,0,540,140)  =   0 → restar   0
-Col 3: mín(790,120,920,530)= 120 → restar 120
-Col 4: mín(0,330,590,130)  =   0 → restar   0
-Col 5: mín(70,0,270,200)   =   0 → restar   0
-                               ─────────────────
-        Σ reducción cols = 0+0+120+0+0 = 120
+── REDUCCIÓN DE COLUMNAS (mínimo costo de llegada a cada sede) ──
+Col MTY (3): mín(790, 120, 920, 530) = 120  → restar 120
+Otras columnas: sus mínimos ya son 0
+                                          ─────────────────
+                           Σ cols = 120 km
 
-══ LB RAÍZ = 1260 + 120 = 1,380 km ══</div>
-        <p><strong>Interpretación:</strong> Cualquier ruta completa entre las 5 ciudades costará <em>al menos</em> 1,380 km. Este es nuestro punto de partida garantizado.</p>
+══ LB RAÍZ = 1,260 + 120 = 1,380 km ══
+
+Interpretación: el autobús de Café Tacvba no puede recorrer
+menos de 1,380 km en cualquier itinerario de gira posible.</div>
       </div>
+
       <div id="sp2" class="spanel">
-        <h3>Paso 2 — Primera Ramificación: Elegir el Arco Crítico</h3>
-        <p>Seleccionamos el arco con <strong>mayor penalización</strong> por no incluirlo. Para cada celda con valor 0 en la matriz reducida calculamos: mín(fila sin col) + mín(col sin fila).</p>
-        <div class="code">Celdas con valor 0 — calculamos penalización:
-─────────────────────────────────────────────────
-Arco (1→4): mín(410,670,70)+mín(330,590,130) = 70+130 = 200
-Arco (2→3): mín(200,330,0)+mín(670,920,530)  =  0+530 = 530 ◄ MÁXIMO
-Arco (2→5): mín(200,330,0)+mín(70,270,200)   =  0+70  =  70
-Arco (3→2): mín(460,590,270)+mín(410,540,140)= 270+140= 410
-Arco (4→1): mín(0,540,920)+mín(200,460,0)    =  0+0   =   0
-Arco (5→1): mín(0,140,530)+mín(200,460,0)    =  0+0   =   0
-─────────────────────────────────────────────────
-→ Arco elegido: (2→3) GDL→MTY  [penalización = 530]
+        <h3>Paso 2 — Primera Ramificación: ¿Qué tramo definimos primero?</h3>
+        <p>Elegimos el tramo del tour con <strong>mayor "penalización"</strong> por no incluirlo. Para cada celda con valor 0 en la matriz reducida, calculamos: mín(fila sin esa col) + mín(col sin esa fila). El arco de mayor penalización es el más "urgente" de incluir o excluir.</p>
+        <div class="code">Tramos candidatos (celdas con valor 0 en la matriz reducida):
+──────────────────────────────────────────────────────────────
+Tramo CDMX→PUE (1→4): mín(410,670,70)+mín(330,590,130) = 70+130 = 200
+Tramo GDL→QRO  (2→5): mín(200,330,0)+mín(70,270,200)   =  0+70  =  70
+Tramo MTY→GDL  (3→2): mín(460,590,270)+mín(410,540,140)= 270+140= 410
+Tramo GDL→MTY  (2→3): mín(200,330,0)+mín(670,920,530)  =  0+530 = 530 ◄ MAX
+Tramo PUE→CDMX (4→1): mín(0,540,920)+mín(200,460,0)    =  0+0   =   0
+Tramo QRO→CDMX (5→1): mín(0,140,530)+mín(200,460,0)    =  0+0   =   0
+──────────────────────────────────────────────────────────────
+→ Tramo elegido: GDL → MTY (2→3), penalización = 530 km
 
-Creamos dos nodos hijos:
-  N1: incluir arco (2→3)  → LB(N1) = a calcular
-  N2: excluir arco (2→3)  → LB(N2) = 1380+530 = 1910</div>
-        <p>N2 tiene LB = 1,910. Si encontramos una solución completa mejor, N2 quedará podado. Exploramos N1 primero (best-first).</p>
+Este es el tramo Guadalajara→Monterrey. Si NO lo incluimos
+en la gira, el costo mínimo sube al menos 530 km.
+
+Creamos dos subproblemas:
+  N1: incluir tramo GDL→MTY  → LB(N1) = a calcular
+  N2: excluir tramo GDL→MTY  → LB(N2) = 1,380 + 530 = 1,910 km</div>
       </div>
-      <div id="sp3" class="spanel">
-        <h3>Paso 3 — Evaluar Nodo N1 (incluye arco 2→3: GDL→MTY)</h3>
-        <p>Al incluir (2→3), eliminamos fila 2 y columna 3, ponemos ∞ en (3,2) para evitar subtours, y reducimos la submatriz.</p>
-        <div class="code">Submatriz tras incluir (2→3):
-  Eliminamos fila 2 y col 3. Ponemos ∞ en posición (3,2).
 
-       1     2     4     5
-1  [  ∞    410     0    70 ]
-3  [ 460    ∞    590   270 ]
-4  [   0   540    ∞    200 ]
-5  [   0   140   130    ∞  ]
+      <div id="sp3" class="spanel">
+        <h3>Paso 3 — Evaluar N1: El bus va de Guadalajara a Monterrey</h3>
+        <p>Al incluir el tramo GDL→MTY (2→3) en el itinerario de la banda, eliminamos fila 2 y columna 3 de la matriz, ponemos ∞ en (3,2) para evitar el viaje de regreso MTY→GDL (que formaría un ciclo prematuro), y reducimos la submatriz resultante.</p>
+        <div class="code">Submatriz tras confirmar tramo GDL→MTY:
+  Eliminamos fila 2 (GDL) y col 3 (MTY).
+  Ponemos ∞ en posición (3,2) = MTY→GDL para evitar subtour.
+
+          CDMX  GDL   PUE   QRO
+CDMX (1) [  ∞    410     0    70 ]
+MTY  (3) [ 460    ∞    590   270 ]   ← (3,2) = ∞
+PUE  (4) [   0   540    ∞    200 ]
+QRO  (5) [   0   140   130    ∞  ]
 
 Reducción de filas:
-Fila 1: mín(410,0,70)    = 0   → restar 0
-Fila 3: mín(460,590,270) = 270 → restar 270
-Fila 4: mín(0,540,200)   = 0   → restar 0
-Fila 5: mín(0,140,130)   = 0   → restar 0
-Σ filas = 270
+  MTY (3): mín(460, 590, 270) = 270  → restar 270
+  Otras: mínimos ya son 0
+  Σ filas adicional = 270 km
 
 Tras reducción de filas:
-       1     2     4     5
-1  [  ∞    410     0    70 ]
-3  [ 190    ∞    320     0 ]
-4  [   0   540    ∞    200 ]
-5  [   0   140   130    ∞  ]
+          CDMX  GDL   PUE   QRO
+CDMX (1) [  ∞    410     0    70 ]
+MTY  (3) [ 190    ∞    320     0 ]
+PUE  (4) [   0   540    ∞    200 ]
+QRO  (5) [   0   140   130    ∞  ]
 
-Reducción columnas:
-Col 2: mín(410,540,140) = 140 → restar 140  (otras ya son 0)
-Σ cols = 140
+Reducción de columnas:
+  GDL (2): mín(410, 540, 140) = 140  → restar 140
+  Otras: mínimos ya son 0
+  Σ cols adicional = 140 km
 
-LB(N1) = 1380 + 0 + 270 + 140 = 1,790 km
-Arcos incluidos: {(2→3)}  |  Parcial: ...→GDL→MTY→...</div>
+LB(N1) = 1,380 + 0 (costo GDL→MTY ya era 0) + 270 + 140 = 1,790 km
+Tramos confirmados: { GDL→MTY }
+Itinerario parcial: ... → GDL → MTY → ...</div>
       </div>
+
       <div id="sp4" class="spanel">
-        <h3>Paso 4 — Profundización y Poda del Árbol</h3>
-        <p>El algoritmo continúa ramificando, eligiendo siempre el arco de mayor penalización, y podando cuando LB ≥ mejor solución conocida o cuando se formarían subtours.</p>
-        <div class="code">Árbol de búsqueda (resumen de iteraciones):
-═════════════════════════════════════════════════════
-Nodo   Arcos incluidos              LB      Estado
-─────────────────────────────────────────────────────
-Raíz   {}                           1,380   Explorado
-N1     {(2→3)}                      1,790   Explorado
-N2     no(2→3)                      1,910   PODADO ✂
-N3     {(2→3),(4→1)}                1,790   Explorado
-N4     {(2→3),(1→4)}                ∞       PODADO ✂ subtour
-N5     {(2→3),(5→1)}                1,790   Explorado
-N6     {(2→3),no(5→1)}              1,910   PODADO ✂
-N7     {(2→3),(4→1),(5→2)}          1,790   Explorado
-N8     {(2→3),(4→1),(3→1)}          ∞       PODADO ✂ subtour
-N9     {(2→3),(5→1),(1→5)}          1,860   Explorado
-N10    {(2→3),(5→1),no(1→5)}        1,910   PODADO ✂
-N11    {(2→3),(4→1),(5→2),(3→5)}    1,790   Explorado
-N12★   Solución completa            2,180   ← ÓPTIMO
-═════════════════════════════════════════════════════
-Nodos evaluados: 13 de 64 posibles → ahorro del 80%</div>
+        <h3>Paso 4 — Profundización: Completando el itinerario de la gira</h3>
+        <p>El algoritmo continúa ramificando desde los nodos activos, siempre eligiendo el tramo con mayor penalización. Los nodos que generarían ciclos prematuros (subtours) o cuyo LB supera el mejor costo conocido son podados.</p>
+        <div class="code">Árbol de búsqueda — Gira Café Tacvba:
+══════════════════════════════════════════════════════════
+Nodo    Tramos confirmados            LB        Estado
+──────────────────────────────────────────────────────────
+Raíz    { }                           1,380 km  Explorado
+N1      { GDL→MTY }                   1,790 km  Explorado
+N2      { ¬GDL→MTY }                  1,910 km  PODADO ✂
+N3      { GDL→MTY, PUE→CDMX }        1,790 km  Explorado
+N4      { GDL→MTY, CDMX→PUE }        ∞         PODADO ✂ subtour
+N5      { GDL→MTY, QRO→CDMX }        1,790 km  Explorado
+N6      { GDL→MTY, ¬QRO→CDMX }       1,910 km  PODADO ✂
+N7      { GDL→MTY, PUE→CDMX, QRO→GDL } 1,790 km Explorado
+N8      { GDL→MTY, PUE→CDMX, MTY→CDMX} ∞       PODADO ✂ subtour
+N9      { GDL→MTY, QRO→CDMX, CDMX→QRO} 1,860 km Explorado
+N10     { GDL→MTY, QRO→CDMX, ¬CDMX→QRO}1,910 km PODADO ✂
+N11     { GDL→MTY, PUE→CDMX, QRO→GDL, MTY→QRO} 1,790 km Explorado
+N12 ★   Itinerario completo            2,180 km  ← ÓPTIMO
+══════════════════════════════════════════════════════════
+Nodos explorados: 13 de 64 posibles → ahorro del 80% 🎉</div>
+        <p><strong>¡La poda funcionó!</strong> El manager de Café Tacvba no necesitó evaluar todos los itinerarios posibles — B&B descartó 51 nodos por ser subóptimos o inviables.</p>
       </div>
+
       <div id="sp5" class="spanel">
-        <h3>Paso 5 — Solución Óptima Confirmada</h3>
-        <p>El algoritmo B&B termina cuando la cola de nodos activos está vacía. La mejor solución encontrada es el <strong>óptimo global garantizado</strong>.</p>
-        <div class="code">SOLUCIÓN ÓPTIMA VERIFICADA:
-═════════════════════════════════════════════════════
-Ruta:  CDMX → PUE → QRO → GDL → MTY → CDMX
-       ( 1 ) → (4) → (5) → (2) → (3) → ( 1 )
+        <h3>Paso 5 — ¡El Itinerario Óptimo de la Gira está confirmado!</h3>
+        <p>El algoritmo B&B terminó. La cola de nodos activos está vacía y todos los nodos con LB &lt; 2,180 km fueron explorados sin encontrar una mejor solución. El manager puede reservar los hoteles y el autobús con total certeza matemática.</p>
+        <div class="code">ITINERARIO ÓPTIMO — CAFÉ TACVBA "CUATRO CAMINOS: LA VUELTA"
+══════════════════════════════════════════════════════════════
+Orden de sedes:  CDMX → PUE → QRO → GDL → MTY → CDMX
 
-Desglose de distancias:
-  CDMX  →  PUE  :   130 km
-  PUE   →  QRO  :   330 km
-  QRO   →  GDL  :   340 km
-  GDL   →  MTY  :   460 km
-  MTY   →  CDMX :   920 km
-                  ─────────
-  TOTAL          : 2,180 km  ✓
+Desglose de tramos del autobús:
+  CDMX  →  PUE   :   130 km  (concierto en Puebla)
+  PUE   →  QRO   :   330 km  (concierto en Querétaro)
+  QRO   →  GDL   :   340 km  (concierto en Guadalajara)
+  GDL   →  MTY   :   460 km  (concierto en Monterrey)
+  MTY   →  CDMX  :   920 km  (regreso a casa)
+                              ──────────────
+  TOTAL RECORRIDO DEL AUTOBÚS :  2,180 km  ✓
 
-Garantía: todos los nodos con LB < 2180 fueron
-explorados. Ninguno produjo solución mejor.
-═════════════════════════════════════════════════════</div>
-        <p><strong>Interpretación:</strong> El representante debe ir CDMX → Puebla → Querétaro → Guadalajara → Monterrey → CDMX, recorriendo <strong>2,180 km</strong> — la distancia mínima matemáticamente garantizada.</p>
+Garantía matemática: ningún otro orden de ciudades
+puede producir un recorrido menor a 2,180 km.
+══════════════════════════════════════════════════════════════
+🔍 Eficiencia del algoritmo:
+   Nodos explorados: 13 de 64 posibles (ahorro del 80%)
+   Tiempo de cómputo: O(n!) peor caso, pero B&B lo reduce
+   drásticamente en la práctica gracias a la poda.</div>
+        <p><strong>Interpretación práctica:</strong> El autobús de Café Tacvba debe salir de CDMX, hacer el concierto en Puebla (130 km), luego Querétaro (330 km más), después Guadalajara (340 km más), Monterrey (460 km más) y finalmente regresar a CDMX (920 km). Total: <strong>2,180 km de gira</strong> — la ruta más eficiente posible.</p>
       </div>
     </div>
 
     <!-- Árbol -->
     <div class="card ck">
-      <h2>🌳 5. Árbol de Branch & Bound Animado</h2>
+      <h2>5. Árbol de Branch &amp; Bound — Planificación de la Gira</h2>
+      <p style="color:#555;margin-bottom:.9rem">Observa cómo el algoritmo construye y poda el árbol de decisiones para encontrar el itinerario óptimo de Café Tacvba.</p>
       <div class="tctrl">
         <button class="mbtn" onclick="treeNext()">▶ Siguiente nodo</button>
         <button class="mbtn" id="autobtn" onclick="treeAuto()">⏩ Auto</button>
         <button class="mbtn rd" onclick="treeReset()">↺ Reiniciar</button>
       </div>
       <canvas id="tree-canvas" height="540"></canvas>
-      <div id="tree-info">Presiona "▶ Siguiente nodo" para construir el árbol paso a paso, o "⏩ Auto" para la animación completa.</div>
+      <div id="tree-info">Presiona "▶ Siguiente nodo" para construir el árbol paso a paso, o "⏩ Auto" para la animación completa del proceso de planificación.</div>
     </div>
 
     <div class="sol-box">
-      <h2>🏆 Solución Óptima Final</h2>
+      <h2>Itinerario Óptimo de la Gira</h2>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.6);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem">Café Tacvba — "Cuatro Caminos: La Vuelta"</div>
       <div class="sol-route">CDMX → PUE → QRO → GDL → MTY → CDMX</div>
       <div class="sol-cost">2,180 km</div>
-      <p>Ruta mínima garantizada por Branch & Bound. Se exploraron solo 13 de 64 nodos posibles (ahorro del 80% en cómputo).</p>
+      <p>Ruta mínima garantizada por Branch &amp; Bound. El autobús de la banda recorrerá esta distancia óptima visitando las 5 sedes. Se evaluaron solo 13 de 64 itinerarios posibles — ¡ahorro del 80% en cómputo!</p>
     </div>
 
   </div>
+  <div class="page-nav teal-bg">
+    <a href="#" class="pnav-btn prev" onclick="goTo('introduccion');return false">← Introducción</a>
+    <span class="page-nav-center">Sección 02 / 05</span>
+    <a href="#" class="pnav-btn next" onclick="goTo('conclusiones');return false">Conclusiones →</a>
+  </div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
 </section>
 
-<!-- ═══════════════════════════════════════════════ CONCLUSIONES -->
+<!-- ═══════════════ CONCLUSIONES ═══════════════ -->
 <section id="conclusiones" class="page">
-
   <div class="sec-hero rust">
     <div class="slabel" style="color:var(--copper)">Sección 03</div>
     <h1>Conclusiones</h1>
-    <p>Reflexiones sobre Branch & Bound para TSP y su posición entre los métodos de optimización combinatoria.</p>
+    <p>Reflexiones sobre Branch &amp; Bound para TSP y su posición entre los métodos de optimización combinatoria.</p>
   </div>
-
   <div class="conc-body">
-
     <div class="pc">
       <div class="pbox">
         <h3>✅ Ventajas del Método</h3>
         <ul>
-          <li>Garantiza la <strong>solución óptima global</strong> — no una aproximación</li>
+          <li>Garantiza la <strong>solución óptima global</strong></li>
           <li>La poda reduce exponencialmente el espacio de búsqueda</li>
           <li>Aplicable a TSP simétrico y asimétrico</li>
-          <li>La reducción de matriz produce cotas muy ajustadas</li>
-          <li>Flexible: admite restricciones adicionales fácilmente</li>
-          <li>Bien estudiado teórica y empíricamente (Little et al., 1963)</li>
-          <li>Efectivo para instancias medianas (hasta ~50 ciudades)</li>
+          <li>Reducción de matriz produce cotas muy ajustadas</li>
+          <li>Flexible: admite restricciones adicionales</li>
+          <li>Bien estudiado (Little et al., 1963)</li>
+          <li>Efectivo para instancias hasta ~50 ciudades</li>
         </ul>
       </div>
       <div class="cbox">
-        <h3>⚠️ Limitaciones y Dificultades</h3>
+        <h3>⚠️ Limitaciones</h3>
         <ul>
-          <li>Complejidad en el peor caso: <strong>O(n!)</strong> — exponencial</li>
-          <li>No escalable para instancias grandes (n &gt; 60 sin mejoras)</li>
-          <li>Rendimiento dependiente de la calidad de las cotas</li>
-          <li>La estrategia de ramificación es crítica para la eficiencia</li>
-          <li>Uso intensivo de memoria para mantener el árbol</li>
-          <li>Difícil de paralelizar de forma eficiente</li>
+          <li>Complejidad en peor caso: <strong>O(n!)</strong></li>
+          <li>No escalable para n &gt; 60 sin mejoras</li>
+          <li>Rendimiento dependiente de la calidad de cotas</li>
+          <li>Estrategia de ramificación crítica para eficiencia</li>
+          <li>Uso intensivo de memoria</li>
+          <li>Difícil de paralelizar eficientemente</li>
           <li>Para n &gt; 60 se prefieren heurísticas (LKH, Concorde)</li>
         </ul>
       </div>
     </div>
-
-    <h2 class="ctitle">📊 Comparación con Otros Métodos</h2>
+    <h2 class="ctitle">Comparación con Otros Métodos</h2>
     <div class="cwrap">
       <table class="ctab">
-        <thead>
-          <tr><th>Método</th><th>Tipo de Problema</th><th>Optimalidad</th><th>Complejidad</th><th>Facilidad</th><th>Escalabilidad</th></tr>
-        </thead>
+        <thead><tr><th>Método</th><th>Tipo de Problema</th><th>Optimalidad</th><th>Complejidad</th><th>Facilidad</th><th>Escalabilidad</th></tr></thead>
         <tbody>
-          <tr class="hl"><td><strong>B&amp;B para TSP ←</strong></td><td>TSP, rutas, combinatorio</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag b">O(n!) peor caso</span></td><td><span class="tag m">Media</span></td><td><span class="tag m">Hasta ~50 ciudades</span></td></tr>
-          <tr><td><strong>Método Gráfico</strong></td><td>PI con 2 variables</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag g">Trivial O(1)</span></td><td><span class="tag g">Muy fácil</span></td><td><span class="tag b">Solo 2 variables</span></td></tr>
-          <tr><td><strong>B&amp;B PI General</strong></td><td>PI mixta y binaria</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">Exponencial</span></td><td><span class="tag m">Media</span></td><td><span class="tag m">Cientos de variables</span></td></tr>
-          <tr><td><strong>B&amp;B Mochila (0/1)</strong></td><td>Mochila binaria</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">O(2ⁿ) peor caso</span></td><td><span class="tag g">Relativamente fácil</span></td><td><span class="tag m">Decenas de ítems</span></td></tr>
-          <tr><td><strong>Planos de Corte (Gomory)</strong></td><td>PI pura y mixta general</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">Polinomial por iter.</span></td><td><span class="tag b">Difícil manualmente</span></td><td><span class="tag g">Buena en práctica</span></td></tr>
+          <tr class="hl"><td><strong>B&amp;B para TSP ←</strong></td><td>TSP, rutas</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag b">O(n!)</span></td><td><span class="tag m">Media</span></td><td><span class="tag m">~50 ciudades</span></td></tr>
+          <tr><td><strong>Método Gráfico</strong></td><td>PI 2 variables</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag g">Trivial</span></td><td><span class="tag g">Muy fácil</span></td><td><span class="tag b">Solo 2 vars</span></td></tr>
+          <tr><td><strong>B&amp;B PI General</strong></td><td>PI mixta y binaria</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">Exponencial</span></td><td><span class="tag m">Media</span></td><td><span class="tag m">Cientos vars</span></td></tr>
+          <tr><td><strong>B&amp;B Mochila 0/1</strong></td><td>Mochila binaria</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">O(2ⁿ)</span></td><td><span class="tag g">Fácil</span></td><td><span class="tag m">Decenas ítems</span></td></tr>
+          <tr><td><strong>Planos de Corte (Gomory)</strong></td><td>PI pura y mixta</td><td><span class="tag g">Óptimo global</span></td><td><span class="tag m">Polinomial/iter</span></td><td><span class="tag b">Difícil</span></td><td><span class="tag g">Buena</span></td></tr>
         </tbody>
       </table>
     </div>
-
     <div class="ab ag">
-      <h2>🔬 Análisis Comparativo Detallado</h2>
-      <p><strong>B&amp;B para TSP vs. B&amp;B para PI general:</strong> Mientras el B&amp;B general ramifica sobre variables (x≤k ó x≥k+1), el B&amp;B para TSP ramifica sobre arcos (incluir/excluir i→j). Esta especificidad permite usar la reducción de matriz como cota, mucho más ajustada que las relajaciones LP genéricas para el TSP.</p>
-      <p><strong>B&amp;B para TSP vs. Planos de Corte de Gomory:</strong> Los cortes de Gomory son más naturales para PI con estructura algebraica regular. Para TSP, las restricciones de eliminación de subtours son combinatorialmente complejas y difíciles de capturar con cortes estándar. B&amp;B con reducción de matriz es más directo y eficiente para esta estructura específica del problema.</p>
-      <p><strong>B&amp;B para TSP vs. Mochila:</strong> La mochila tiene estructura de árbol binario simple (incluir/excluir ítem). El TSP tiene ramificación en arcos con dependencias de orden (subtours), lo que lo hace exponencialmente más complejo. La cota en mochila (relajación fraccionaria) también es más fácil de calcular.</p>
+      <h2>Análisis Comparativo</h2>
+      <p><strong>B&amp;B TSP vs. B&amp;B PI general:</strong> El B&amp;B general ramifica sobre variables; el B&amp;B para TSP ramifica sobre arcos (incluir/excluir i→j). Esto permite usar la reducción de matriz como cota, mucho más ajustada que las relajaciones LP genéricas.</p>
+      <p><strong>B&amp;B TSP vs. Gomory:</strong> Los cortes de Gomory son más naturales para PI algebraica regular. Para TSP, las restricciones de subtours son complejas — B&amp;B con reducción de matriz es más directo y eficiente.</p>
+      <p><strong>B&amp;B TSP vs. Mochila:</strong> La mochila tiene árbol binario simple. El TSP tiene dependencias de orden (subtours), haciéndolo exponencialmente más complejo. La cota en mochila también es más fácil de calcular.</p>
     </div>
-
     <div class="ab at">
-      <h2>💡 Reflexión Final</h2>
-      <p>Branch & Bound para TSP demuestra elegantemente cómo una búsqueda inteligente puede encontrar el óptimo global sin evaluar todas las soluciones posibles. La clave está en la <strong>calidad de la cota inferior</strong>: mientras más ajustada sea, más nodos se podan y más eficiente resulta el algoritmo.</p>
-      <p>Para el problema resuelto, el algoritmo exploró solo <strong>13 de los 64 nodos posibles</strong> — un ahorro del 80%. Esta eficiencia crece significativamente con instancias más grandes, donde la diferencia entre B&amp;B y fuerza bruta es la diferencia entre segundos y millones de años de cómputo.</p>
-      <p>La principal lección es que los algoritmos de optimización no deben buscar en todas partes — deben saber exactamente <em>dónde no buscar</em>.</p>
+      <h2>Reflexión Final</h2>
+      <p>Branch &amp; Bound para TSP demuestra cómo una búsqueda inteligente puede encontrar el óptimo global sin evaluar todas las soluciones. La clave está en la <strong>calidad de la cota inferior</strong>: más ajustada = más nodos podados = más eficiente.</p>
+      <p>Para nuestro problema, se exploraron solo <strong>13 de 64 nodos posibles</strong> — ahorro del 80%. Los algoritmos de optimización no buscan en todas partes: saben exactamente <em>dónde no buscar</em>.</p>
     </div>
-
   </div>
+  <div class="page-nav rust-bg">
+    <a href="#" class="pnav-btn prev" onclick="goTo('desarrollo');return false">← Desarrollo</a>
+    <span class="page-nav-center">Sección 03 / 05</span>
+    <a href="#" class="pnav-btn next" onclick="goTo('referencias');return false">Referencias →</a>
+  </div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
 </section>
 
-<!-- ═══════════════════════════════════════════════ REFERENCIAS -->
+<!-- ═══════════════ REFERENCIAS ═══════════════ -->
 <section id="referencias" class="page">
-
   <div class="sec-hero dark">
     <div class="slabel" style="color:var(--copper)">Sección 04</div>
     <h1>Referencias Bibliográficas</h1>
-    <p>Fuentes académicas consultadas para la elaboración de este recurso didáctico, en formato APA 7ª edición.</p>
+    <p>Fuentes académicas consultadas para la elaboración de este recurso, en formato APA 7ª edición.</p>
   </div>
-
   <div class="refs-body">
     <div class="ritem"><div class="rnum">[1]</div><div class="rtxt">Hillier, F. S., &amp; Lieberman, G. J. (2021). <em>Introduction to Operations Research</em> (11.ª ed.). McGraw-Hill Education.</div></div>
     <div class="ritem"><div class="rnum">[2]</div><div class="rtxt">Taha, H. A. (2017). <em>Operations Research: An Introduction</em> (10.ª ed.). Pearson Education.</div></div>
@@ -706,448 +929,378 @@ explorados. Ninguno produjo solución mejor.
     <div class="ritem"><div class="rnum">[7]</div><div class="rtxt">Winston, W. L. (2004). <em>Operations Research: Applications and Algorithms</em> (4.ª ed.). Thomson Learning.</div></div>
     <div class="ritem"><div class="rnum">[8]</div><div class="rtxt">Wolsey, L. A. (2020). <em>Integer Programming</em> (2.ª ed.). Wiley.</div></div>
     <div class="ritem"><div class="rnum">[9]</div><div class="rtxt">Papadimitriou, C. H., &amp; Steiglitz, K. (1998). <em>Combinatorial Optimization: Algorithms and Complexity</em>. Dover Publications.</div></div>
-    <div class="ritem"><div class="rnum">[10]</div><div class="rtxt">National Institute of Standards and Technology. (2024). <em>Dictionary of Algorithms and Data Structures: Branch and Bound</em>. U.S. Department of Commerce. <a href="https://xlinux.nist.gov/dads/HTML/branchbound.html" target="_blank">https://xlinux.nist.gov/dads/HTML/branchbound.html</a></div></div>
-    <div class="ritem"><div class="rnum">[11]</div><div class="rtxt">Gómez, A. C. (2022). <em>Notas de clase: Programación Entera y Optimización Combinatoria</em>. Departamento de Ingeniería Industrial, Universidad Nacional Autónoma de México.</div></div>
-    <div class="rnote">NOTA: Referencias en formato APA 7ª edición. Las distancias son aproximadas y corresponden a distancias por carretera según datos públicos. El problema fue formulado originalmente para este recurso didáctico.</div>
+    <div class="ritem"><div class="rnum">[10]</div><div class="rtxt">National Institute of Standards and Technology. (2024). <em>Dictionary of Algorithms and Data Structures: Branch and Bound</em>. <a href="https://xlinux.nist.gov/dads/HTML/branchbound.html" target="_blank">https://xlinux.nist.gov/dads/HTML/branchbound.html</a></div></div>
+    <div class="ritem"><div class="rnum">[11]</div><div class="rtxt">Gómez, A. C. (2022). <em>Notas de clase: Programación Entera y Optimización Combinatoria</em>. Departamento de Ingeniería Industrial, UNAM.</div></div>
+    <div class="rnote">NOTA: Referencias en formato APA 7ª edición. Las distancias son aproximadas por carretera según datos públicos. El problema fue formulado originalmente para este recurso didáctico.</div>
   </div>
+  <div class="page-nav dark">
+    <a href="#" class="pnav-btn prev" onclick="goTo('conclusiones');return false">← Conclusiones</a>
+    <span class="page-nav-center">Sección 04 / 05</span>
+    <a href="#" class="pnav-btn quiz-cta" onclick="goTo('cuestionario');return false">📝 Ir al Cuestionario →</a>
+  </div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
+</section>
+
+<!-- ═══════════════ CUESTIONARIO ═══════════════ -->
+<section id="cuestionario" class="page">
+  <div class="sec-hero quiz-bg">
+    <div class="slabel" style="color:var(--copper)">📝 Evaluación Final</div>
+    <h1>Cuestionario: TSP &amp; Branch and Bound</h1>
+    <p>10 preguntas de opción múltiple. Selecciona la respuesta correcta en cada pregunta y presiona "Calificar" al terminar.</p>
+  </div>
+  <div class="quiz-body">
+    <div id="score-panel" class="score-panel">
+      <div class="score-label">Tu calificación</div>
+      <div class="score-big" id="score-big">—</div>
+      <div class="score-msg" id="score-msg"></div>
+      <button class="retry-btn" onclick="retryQuiz()">🔄 Volver a intentarlo</button>
+    </div>
+    <div id="quiz-questions"></div>
+    <div class="quiz-submit-row">
+      <button class="quiz-submit" id="quiz-submit-btn" onclick="gradeQuiz()">✓ Calificar cuestionario</button>
+    </div>
+  </div>
+  <div class="page-nav dark">
+    <a href="#" class="pnav-btn prev" onclick="goTo('referencias');return false">← Referencias</a>
+    <span class="page-nav-center">Sección 05 / 05</span>
+    <a href="#" class="pnav-btn next" onclick="goTo('portada');return false">Inicio →</a>
+  </div>
+  <footer><div class="footer-inner"><div class="footer-line"></div><div class="footer-name">Frida Monserrat Torrecilla León <br> Felipe de la Cruz Salomé</div><div class="footer-sub">Recurso Didáctico · TSP &amp; Branch and Bound</div><div class="footer-line"></div></div></footer>
 </section>
 
 <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
 <script>
-/* ── NAVIGATION ─────────────────────────────────────── */
-var currentPage = 'portada';
-
-function goTo(id) {
-  // Hide current
+/* ─── NAVIGATION ─── */
+var currentPage='portada';
+function goTo(id){
   document.getElementById(currentPage).classList.remove('active');
-  document.getElementById('nav-' + currentPage).classList.remove('active');
-  // Show new
+  document.getElementById('nav-'+currentPage).classList.remove('active');
   document.getElementById(id).classList.add('active');
-  document.getElementById('nav-' + id).classList.add('active');
-  currentPage = id;
-  window.scrollTo(0, 0);
-  // Init page-specific canvas
-  if (id === 'desarrollo') {
-    setTimeout(function() { initMap(); initTree(); }, 100);
-  }
-  if (id === 'introduccion') {
-    setTimeout(drawIntroTree, 200);
-  }
+  document.getElementById('nav-'+id).classList.add('active');
+  currentPage=id;
+  window.scrollTo(0,0);
+  if(id==='desarrollo'){setTimeout(function(){initMap();initTree();},120);}
+  if(id==='introduccion'){setTimeout(drawIntroTree,220);}
+  if(id==='cuestionario'){buildQuiz();}
+  // Hide PDF button on quiz page
+  var fab=document.getElementById('pdf-fab');
+  if(fab){fab.style.display=(id==='cuestionario')?'none':'flex';}
 }
 
-/* ── CURSOR ─────────────────────────────────────────── */
-var curEl  = document.getElementById('cur');
-var ringEl = document.getElementById('cur-ring');
-var mx = -100, my = -100, rx = -100, ry = -100;
-
-document.addEventListener('mousemove', function(e) {
-  mx = e.clientX; my = e.clientY;
-  curEl.style.left = mx + 'px';
-  curEl.style.top  = my + 'px';
-});
-(function ringLoop() {
-  rx += (mx - rx) * 0.13;
-  ry += (my - ry) * 0.13;
-  ringEl.style.left = rx + 'px';
-  ringEl.style.top  = ry + 'px';
-  requestAnimationFrame(ringLoop);
-})();
-document.addEventListener('mouseover', function(e) {
-  if (e.target.closest('button,a,.obj-card,.idx-card,.badge')) curEl.classList.add('big');
-});
-document.addEventListener('mouseout', function(e) {
-  if (e.target.closest('button,a,.obj-card,.idx-card,.badge')) curEl.classList.remove('big');
-});
-
-/* ── STAR CANVAS ─────────────────────────────────────── */
-(function() {
-  var c   = document.getElementById('star-c');
-  var ctx = c.getContext('2d');
-  var stars = [];
-  function resize() {
-    c.width  = c.offsetWidth;
-    c.height = c.offsetHeight;
-    stars = [];
-    for (var i = 0; i < 130; i++) {
-      stars.push({
-        x: Math.random() * c.width,
-        y: Math.random() * c.height,
-        r: Math.random() * 1.5 + 0.3,
-        a: Math.random(),
-        da: (Math.random() * 0.007 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
-        vx: (Math.random() - 0.5) * 0.05,
-        vy: (Math.random() - 0.5) * 0.05
-      });
-    }
-  }
-  function draw() {
-    if (!c.width) { requestAnimationFrame(draw); return; }
-    ctx.clearRect(0, 0, c.width, c.height);
-    stars.forEach(function(s) {
-      s.x = (s.x + s.vx + c.width)  % c.width;
-      s.y = (s.y + s.vy + c.height) % c.height;
-      s.a += s.da;
-      if (s.a >= 1 || s.a <= 0) s.da *= -1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(245,234,216,' + Math.max(0.05, s.a).toFixed(2) + ')';
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-  resize();
-  draw();
-  window.addEventListener('resize', resize);
-})();
-
-/* ── GRID CANVAS ─────────────────────────────────────── */
-(function() {
-  var c   = document.getElementById('grid-c');
-  var ctx = c.getContext('2d');
-  var off = 0;
-  function resize() {
-    c.width  = c.offsetWidth;
-    c.height = c.offsetHeight;
-  }
-  function draw() {
-    if (!c.width) { requestAnimationFrame(draw); return; }
-    ctx.clearRect(0, 0, c.width, c.height);
-    var step = 62;
-    ctx.strokeStyle = 'rgba(184,115,51,1)';
-    ctx.lineWidth = 0.5;
-    var o = off % step;
-    for (var x = o; x < c.width;  x += step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,c.height); ctx.stroke(); }
-    for (var y = o; y < c.height; y += step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(c.width,y);  ctx.stroke(); }
-    ctx.fillStyle = 'rgba(212,160,23,0.22)';
-    for (var xi = o; xi < c.width; xi += step)
-      for (var yi = o; yi < c.height; yi += step) {
-        ctx.beginPath(); ctx.arc(xi, yi, 1.4, 0, Math.PI*2); ctx.fill();
-      }
-    off += 0.16;
-    requestAnimationFrame(draw);
-  }
-  resize();
-  draw();
-  window.addEventListener('resize', resize);
-})();
-
-/* ── STEP TABS ───────────────────────────────────────── */
-function showStep(idx, btn) {
-  document.querySelectorAll('.stab').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelectorAll('.spanel').forEach(function(p) { p.classList.remove('active'); });
-  btn.classList.add('active');
-  document.getElementById('sp' + idx).classList.add('active');
-}
-
-/* ── INTRO TREE ──────────────────────────────────────── */
-var introNodes = [
-  {x:.50,y:.10,label:'Raíz',     sub:'LB=1380', c:'#1a6b5a', p:-1},
-  {x:.27,y:.37,label:'N1',       sub:'LB=1790', c:'#1a6b5a', p:0},
-  {x:.73,y:.37,label:'N2',       sub:'LB=1910', c:'#b87333', p:0},
-  {x:.13,y:.66,label:'N3',       sub:'LB=1790', c:'#1a6b5a', p:1},
-  {x:.42,y:.66,label:'N4 ✕',    sub:'SUBTOUR',  c:'#8b3a1e', p:1},
-  {x:.58,y:.66,label:'N5',       sub:'LB=1790', c:'#1a6b5a', p:2},
-  {x:.87,y:.66,label:'N6 ✕',    sub:'PODADO',   c:'#8b3a1e', p:2},
-  {x:.13,y:.92,label:'★ ÓPTIMO',sub:'2180 km',  c:'#d4a017', p:3},
+/* ─── PDF MODAL ─── */
+var PDF_SECTIONS=[
+  {chk:'chk-portada',      id:'portada'},
+  {chk:'chk-introduccion', id:'introduccion'},
+  {chk:'chk-desarrollo',   id:'desarrollo'},
+  {chk:'chk-conclusiones', id:'conclusiones'},
+  {chk:'chk-referencias',  id:'referencias'}
 ];
-var introProgress = 0, introTimer = null;
 
-function drawIntroTree() {
-  var canvas = document.getElementById('intro-tree');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth || 580;
-  canvas.height = 290;
-  introProgress = 0;
-  clearInterval(introTimer);
-  introTimer = setInterval(function() {
-    introProgress++;
-    renderIntroTree(canvas, ctx);
-    if (introProgress >= introNodes.length) clearInterval(introTimer);
-  }, 280);
+function openPdfModal(){
+  document.getElementById('pdf-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePdfModal(){
+  document.getElementById('pdf-modal').classList.remove('open');
+  document.body.style.overflow='';
 }
 
-function renderIntroTree(canvas, ctx) {
-  var W = canvas.width, H = canvas.height;
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#fafaf7'; ctx.fillRect(0, 0, W, H);
-  for (var i = 1; i < introProgress; i++) {
-    var n = introNodes[i], par = introNodes[n.p];
-    ctx.beginPath();
-    ctx.strokeStyle = n.c === '#8b3a1e' ? 'rgba(139,58,30,.35)' : 'rgba(26,107,90,.45)';
-    ctx.lineWidth = 1.8;
-    ctx.setLineDash(n.c === '#8b3a1e' ? [5,4] : []);
-    ctx.moveTo(par.x*W, par.y*H+18);
-    ctx.lineTo(n.x*W,   n.y*H-18);
-    ctx.stroke(); ctx.setLineDash([]);
-  }
-  for (var j = 0; j < introProgress; j++) {
-    var nd = introNodes[j];
-    var nx = nd.x*W, ny = nd.y*H;
-    ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 8;
-    ctx.beginPath(); ctx.ellipse(nx, ny, 46, 18, 0, 0, Math.PI*2);
-    ctx.fillStyle = nd.c; ctx.fill();
-    ctx.shadowBlur = 0;
-    if (j === introProgress-1) { ctx.strokeStyle='#d4a017'; ctx.lineWidth=2.5; ctx.stroke(); }
-    ctx.fillStyle='white'; ctx.textAlign='center';
-    ctx.font='bold 9px Space Mono,monospace'; ctx.fillText(nd.label, nx, ny-2);
-    ctx.font='7.5px Space Mono,monospace'; ctx.fillStyle='rgba(255,255,255,.8)';
-    ctx.fillText(nd.sub, nx, ny+9);
-  }
-}
-
-/* ── MAP ─────────────────────────────────────────────── */
-var cities = [
-  {name:'CDMX', x:400, y:270},
-  {name:'GDL',  x:230, y:185},
-  {name:'MTY',  x:470, y:100},
-  {name:'PUE',  x:480, y:300},
-  {name:'QRO',  x:360, y:190},
-];
-var distMatrix = [
-  [0,540,920,130,200],
-  [540,0,460,670,340],
-  [920,460,0,1050,730],
-  [130,670,1050,0,330],
-  [200,340,730,330,0]
-];
-var optRoute = [0,3,4,1,2,0];
-var mapCanvas, mapCtx, mapTimer = null;
-
-function initMap() {
-  mapCanvas = document.getElementById('map-canvas');
-  if (!mapCanvas) return;
-  mapCanvas.width  = mapCanvas.offsetWidth  || 760;
-  mapCanvas.height = mapCanvas.offsetHeight || 400;
-  drawMapBase();
-}
-
-function drawMapBase() {
-  var W = mapCanvas.width, H = mapCanvas.height;
-  mapCtx = mapCanvas.getContext('2d');
-  var g = mapCtx.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'#cce4f5'); g.addColorStop(1,'#a8d0e6');
-  mapCtx.fillStyle = g; mapCtx.fillRect(0,0,W,H);
-  // terrain patches
-  [[90,55,130,95,'rgba(140,180,100,.2)'],[280,28,190,135,'rgba(120,170,90,.17)'],
-   [550,65,150,88,'rgba(140,180,100,.19)'],[45,265,115,105,'rgba(130,175,95,.19)'],
-   [610,235,125,125,'rgba(120,170,90,.17)']].forEach(function(p) {
-    mapCtx.beginPath();
-    mapCtx.ellipse(p[0]+p[2]/2, p[1]+p[3]/2, p[2]/2, p[3]/2, 0, 0, Math.PI*2);
-    mapCtx.fillStyle=p[4]; mapCtx.fill();
+function executePrint(){
+  /* 1 ── Collect selected sections */
+  var selected=[];
+  PDF_SECTIONS.forEach(function(s){
+    if(document.getElementById(s.chk).checked) selected.push(s.id);
   });
-  // grid
-  mapCtx.strokeStyle='rgba(255,255,255,.32)'; mapCtx.lineWidth=.5;
-  for(var x=0;x<W;x+=75){mapCtx.beginPath();mapCtx.moveTo(x,0);mapCtx.lineTo(x,H);mapCtx.stroke();}
-  for(var y=0;y<H;y+=75){mapCtx.beginPath();mapCtx.moveTo(0,y);mapCtx.lineTo(W,y);mapCtx.stroke();}
-  // scale bar
-  mapCtx.strokeStyle='rgba(0,0,0,.35)'; mapCtx.lineWidth=2;
-  mapCtx.beginPath(); mapCtx.moveTo(25,H-22); mapCtx.lineTo(115,H-22); mapCtx.stroke();
-  mapCtx.fillStyle='#444'; mapCtx.font='9px Space Mono,monospace'; mapCtx.textAlign='center';
-  mapCtx.fillText('~350 km',70,H-10);
-  drawCities();
-}
+  if(selected.length===0){alert('Selecciona al menos una sección para incluir en el PDF.');return;}
+  closePdfModal();
 
-function drawCities() {
-  cities.forEach(function(c) {
-    mapCtx.beginPath(); mapCtx.arc(c.x+2,c.y+2,11,0,Math.PI*2);
-    mapCtx.fillStyle='rgba(0,0,0,.18)'; mapCtx.fill();
-    mapCtx.beginPath(); mapCtx.arc(c.x,c.y,11,0,Math.PI*2);
-    mapCtx.fillStyle='#8b3a1e'; mapCtx.fill();
-    mapCtx.strokeStyle='white'; mapCtx.lineWidth=2.5; mapCtx.stroke();
-    mapCtx.beginPath(); mapCtx.arc(c.x,c.y,16,0,Math.PI*2);
-    mapCtx.strokeStyle='rgba(139,58,30,.28)'; mapCtx.lineWidth=1.2; mapCtx.stroke();
-    mapCtx.fillStyle='#1a1008'; mapCtx.font='bold 12px Crimson Pro,serif';
-    mapCtx.textAlign='center'; mapCtx.fillText(c.name,c.x,c.y+27);
+  /* 2 ── Mark which pages to show */
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('print-include');});
+  selected.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.classList.add('print-include');
   });
-}
 
-function drawRoute(route, color, width, alpha, dashed) {
-  mapCtx.save();
-  mapCtx.strokeStyle=color; mapCtx.lineWidth=width; mapCtx.globalAlpha=alpha;
-  if(dashed) mapCtx.setLineDash([9,5]);
-  for(var k=0;k<route.length-1;k++){
-    var a=cities[route[k]], b=cities[route[k+1]];
-    mapCtx.beginPath(); mapCtx.moveTo(a.x,a.y); mapCtx.lineTo(b.x,b.y); mapCtx.stroke();
-    var ang=Math.atan2(b.y-a.y,b.x-a.x);
-    var mx2=(a.x*.44+b.x*.56), my2=(a.y*.44+b.y*.56);
-    mapCtx.beginPath();
-    mapCtx.moveTo(mx2,my2);
-    mapCtx.lineTo(mx2-11*Math.cos(ang-Math.PI/6),my2-11*Math.sin(ang-Math.PI/6));
-    mapCtx.lineTo(mx2-11*Math.cos(ang+Math.PI/6),my2-11*Math.sin(ang+Math.PI/6));
-    mapCtx.closePath(); mapCtx.fillStyle=color; mapCtx.fill();
-  }
-  mapCtx.setLineDash([]); mapCtx.restore();
-  drawCities();
-}
+  /* 3 ── Only pre-process if desarrollo is selected */
+  var needsDes = selected.indexOf('desarrollo')!==-1;
+  if(!needsDes){ setTimeout(function(){window.print();setTimeout(cleanupPrint,1200);},150); return; }
 
-function mapShowAll() {
-  stopMapAnim(); drawMapBase();
-  var routes=[[0,1,2,3,4,0],[0,1,3,2,4,0],[0,2,1,4,3,0],[0,3,1,2,4,0],[0,4,3,2,1,0]];
-  var cols=['#4a7fa5','#5a8a4a','#a55a4a','#7a4a9a','#4a9a9a'];
-  routes.forEach(function(r,i){drawRoute(r,cols[i],2,.58,true);});
-  document.getElementById('map-status').textContent='🕸 5 rutas posibles de las 12 totales. La óptima se muestra con "Ruta óptima".';
-}
-function mapShowOptimal() {
-  stopMapAnim(); drawMapBase();
-  drawRoute(optRoute,'#1a6b5a',4,.95,false);
-  var total=0; for(var k=0;k<optRoute.length-1;k++) total+=distMatrix[optRoute[k]][optRoute[k+1]];
-  document.getElementById('map-status').textContent='⭐ Ruta óptima: CDMX→PUE→QRO→GDL→MTY→CDMX | Total: '+total+' km';
-}
-var mapStep=0;
-function mapAnimate() {
-  stopMapAnim(); drawMapBase(); mapStep=0;
-  var segs=[[0,3],[3,4],[4,1],[1,2],[2,0]];
-  var legs=[130,330,340,460,920];
-  var labels=['CDMX','PUE','QRO','GDL','MTY','CDMX'];
-  function step() {
-    if(mapStep>=segs.length){
-      document.getElementById('map-status').textContent='✅ Recorrido completo: 2,180 km — ¡Ruta óptima confirmada!';
-      return;
+  /* 4 ── Make sure map and tree are rendered before we snapshot them */
+  initMap();
+
+  /* Render complete B&B tree */
+  initTree();
+  var allVis=[];
+  for(var k=0;k<tN.length;k++) allVis.push(k);
+  renderTree(allVis);
+
+  /* Render intro tree fully too */
+  var itc=document.getElementById('intro-tree');
+  if(itc){iProg=iN.length;clearInterval(iT);rIT(itc,itc.getContext('2d'));}
+
+  /* 5 ── Small delay so canvas pixels are ready, then snapshot */
+  setTimeout(function(){
+
+    /* ── 5a: MAP snapshot ── */
+    var mapC=document.getElementById('map-canvas');
+    /* Draw the optimal route on the map for the PDF */
+    mapShowOptimal();
+    var mapImg=null;
+    if(mapC && mapC.width>0){
+      try{ mapImg=mapC.toDataURL('image/png'); }catch(e){}
     }
-    drawMapBase();
-    for(var i=0;i<=mapStep;i++) drawRoute([segs[i][0],segs[i][1]],'#1a6b5a',4,.92,false);
-    var cur=cities[segs[mapStep][1]];
-    mapCtx.beginPath(); mapCtx.arc(cur.x,cur.y,22,0,Math.PI*2);
-    mapCtx.strokeStyle='#d4a017'; mapCtx.lineWidth=3; mapCtx.stroke();
-    document.getElementById('map-status').textContent='▶ '+labels.slice(0,mapStep+2).join(' → ')+' | +'+legs[mapStep]+' km';
-    mapStep++;
-    mapTimer=setTimeout(step,920);
-  }
-  step();
-}
-function mapClear() { stopMapAnim(); drawMapBase(); document.getElementById('map-status').textContent=''; }
-function stopMapAnim() { if(mapTimer){clearTimeout(mapTimer);mapTimer=null;} }
 
-/* ── B&B TREE ────────────────────────────────────────── */
-var treeNodes = [
-  {px:.500,py:.045,label:'Raíz',           sub:'LB = 1,380 km', c:'#1a6b5a', par:-1, el:'',              pruned:false},
-  {px:.260,py:.185,label:'N1: incl(2→3)',  sub:'LB = 1,790 km', c:'#1a6b5a', par:0,  el:'incluir 2→3', pruned:false},
-  {px:.740,py:.185,label:'N2: excl(2→3)',  sub:'LB = 1,910 km', c:'#b87333', par:0,  el:'excluir 2→3', pruned:false},
-  {px:.130,py:.355,label:'N3: incl(4→1)',  sub:'LB = 1,790 km', c:'#1a6b5a', par:1,  el:'incluir 4→1', pruned:false},
-  {px:.390,py:.355,label:'N4: incl(1→4)',  sub:'✕ SUBTOUR',     c:'#8b3a1e', par:1,  el:'incluir 1→4', pruned:true},
-  {px:.620,py:.355,label:'N5: incl(5→1)',  sub:'LB = 1,790 km', c:'#1a6b5a', par:2,  el:'incluir 5→1', pruned:false},
-  {px:.860,py:.355,label:'N6: excl(5→1)',  sub:'✕ PODADO',      c:'#8b3a1e', par:2,  el:'excluir 5→1', pruned:true},
-  {px:.065,py:.530,label:'N7: incl(5→2)',  sub:'LB = 1,790 km', c:'#1a6b5a', par:3,  el:'incluir 5→2', pruned:false},
-  {px:.200,py:.530,label:'N8: incl(3→1)',  sub:'✕ SUBTOUR',     c:'#8b3a1e', par:3,  el:'incluir 3→1', pruned:true},
-  {px:.570,py:.530,label:'N9: incl(1→5)',  sub:'LB = 1,860 km', c:'#b87333', par:5,  el:'incluir 1→5', pruned:false},
-  {px:.700,py:.530,label:'N10: excl(1→5)', sub:'✕ PODADO',      c:'#8b3a1e', par:5,  el:'excluir 1→5', pruned:true},
-  {px:.065,py:.720,label:'N11: incl(3→5)', sub:'LB = 1,790 km', c:'#1a6b5a', par:7,  el:'incluir 3→5', pruned:false},
-  {px:.065,py:.920,label:'★ ÓPTIMO',       sub:'2,180 km ✓',    c:'#d4a017', par:11, el:'CDMX→PUE→QRO→GDL→MTY→CDMX', pruned:false},
-];
-var treeInfo = [
-  '📍 Nodo Raíz: Reducimos la matriz completa. LB = 1260 (filas) + 120 (cols) = 1,380 km. Este es el mínimo absoluto posible.',
-  '🔀 Ramificamos el arco (2→3) GDL→MTY — mayor penalización = 530. N1 incluye este arco y recalcula la matriz reducida.',
-  '🔀 N2 excluye el arco (2→3). LB = 1380 + 530 = 1,910 km. Lo dejamos en la cola y exploramos N1 primero.',
-  '🔀 Desde N1, el arco crítico es (4→1) PUE→CDMX. N3 hereda LB = 1,790 km. Seguimos profundizando.',
-  '✂️ N4 intenta incluir (1→4) CDMX→PUE — formaría subtour 1→4→1. PODADO inmediatamente.',
-  '🔀 Desde N2, incluir (5→1) QRO→CDMX da N5 con LB = 1,790 km.',
-  '✂️ N6 excluye (5→1). Su LB sube demasiado. PODADO — no puede mejorar la solución.',
-  '🔀 Desde N3, incluir (5→2) QRO→GDL da N7. La ruta parcial va tomando forma.',
-  '✂️ N8 incluiría (3→1) MTY→CDMX formando un subtour. PODADO.',
-  '🔀 N9 incluye (1→5) CDMX→QRO. LB sube a 1,860. Aún competitivo — lo exploramos.',
-  '✂️ N10 excluye (1→5). Su LB supera nuestro mejor bound conocido. PODADO.',
-  '🔀 N11 incluye (3→5) MTY→QRO. La ruta se está completando con los arcos restantes.',
-  '🏆 SOLUCIÓN ÓPTIMA: CDMX→PUE→QRO→GDL→MTY→CDMX = 130+330+340+460+920 = 2,180 km. Ningún nodo restante puede mejorarla.',
-];
-var treeStep = 0, treeAutoTimer = null, treeAutoRunning = false;
-var treeCanvas2, treeCtx2;
-
-function initTree() {
-  treeCanvas2 = document.getElementById('tree-canvas');
-  if (!treeCanvas2) return;
-  treeCanvas2.width  = treeCanvas2.offsetWidth || 800;
-  treeCanvas2.height = 540;
-  treeCtx2 = treeCanvas2.getContext('2d');
-  treeStep = 0;
-  renderTree([]);
-  document.getElementById('tree-info').textContent = 'Presiona "▶ Siguiente nodo" para construir el árbol paso a paso, o "⏩ Auto" para la animación completa.';
-}
-
-function renderTree(visible) {
-  var W = treeCanvas2.width, H = treeCanvas2.height;
-  treeCtx2.clearRect(0,0,W,H);
-  treeCtx2.fillStyle='#fafaf8'; treeCtx2.fillRect(0,0,W,H);
-  // edges
-  for(var i=0;i<visible.length;i++) {
-    var idx=visible[i], nd=treeNodes[idx];
-    if(nd.par<0) continue;
-    var par=treeNodes[nd.par];
-    var nx=nd.px*W, ny=nd.py*H, px2=par.px*W, py2=par.py*H;
-    treeCtx2.beginPath();
-    treeCtx2.strokeStyle=nd.pruned?'rgba(139,58,30,.3)':'rgba(26,107,90,.42)';
-    treeCtx2.lineWidth=1.8;
-    treeCtx2.setLineDash(nd.pruned?[5,4]:[]);
-    var cpx=(nx+px2)/2, cpy=(ny+py2)/2;
-    treeCtx2.moveTo(px2,py2+17); treeCtx2.quadraticCurveTo(cpx,cpy,nx,ny-17); treeCtx2.stroke();
-    treeCtx2.setLineDash([]);
-    // edge label
-    treeCtx2.fillStyle='#999'; treeCtx2.font='7.5px Space Mono,monospace'; treeCtx2.textAlign='center';
-    treeCtx2.fillText(nd.el,(nx+px2)/2+8,(ny+py2)/2-4);
-  }
-  // nodes
-  for(var j=0;j<visible.length;j++) {
-    var vi=visible[j], vn=treeNodes[vi];
-    var vx=vn.px*W, vy=vn.py*H, isNew=(j===visible.length-1);
-    treeCtx2.shadowColor='rgba(0,0,0,.18)'; treeCtx2.shadowBlur=10;
-    treeCtx2.beginPath(); treeCtx2.ellipse(vx,vy,54,18,0,0,Math.PI*2);
-    treeCtx2.fillStyle=vn.c; treeCtx2.fill();
-    treeCtx2.shadowBlur=0;
-    if(isNew){
-      treeCtx2.beginPath(); treeCtx2.ellipse(vx,vy,60,24,0,0,Math.PI*2);
-      treeCtx2.strokeStyle=vn.c==='#d4a017'?'#f0c040':'rgba(212,160,23,.65)';
-      treeCtx2.lineWidth=2.5; treeCtx2.stroke();
+    /* ── 5b: TREE snapshot ── */
+    var treeC=document.getElementById('tree-canvas');
+    var treeImg=null;
+    if(treeC && treeC.width>0){
+      try{ treeImg=treeC.toDataURL('image/png'); }catch(e){}
     }
-    treeCtx2.fillStyle='white'; treeCtx2.textAlign='center';
-    treeCtx2.font='bold 8px Space Mono,monospace'; treeCtx2.fillText(vn.label,vx,vy-2);
-    treeCtx2.font='7px Space Mono,monospace'; treeCtx2.fillStyle='rgba(255,255,255,.8)';
-    treeCtx2.fillText(vn.sub,vx,vy+9);
+
+    /* ── 5c: Inject a hidden print-only block inside #desarrollo ── */
+    var old=document.getElementById('pdf-static-block');
+    if(old) old.parentNode.removeChild(old);
+
+    var div=document.createElement('div');
+    div.id='pdf-static-block';
+
+    /* Map image */
+    var mapHTML='<div class="pdf-static-section"><h3 class="pdf-static-h">🗺️ Mapa de la Gira — Ruta Óptima</h3>';
+    if(mapImg){
+      mapHTML+='<img src="'+mapImg+'" class="pdf-static-img" alt="Mapa gira Café Tacvba">';
+    } else {
+      mapHTML+=mapFallbackTable();
+    }
+    mapHTML+='<p class="pdf-static-caption">Ruta óptima: CDMX → PUE → QRO → GDL → MTY → CDMX | 2,180 km totales</p></div>';
+
+    /* All step panels as static text */
+    var stepsHTML='<div class="pdf-static-section"><h3 class="pdf-static-h">Resolución Paso a Paso con Branch &amp; Bound</h3>';
+    var stepTitles=[
+      'Paso 0 — Nodo Raíz: Construimos la Matriz Inicial',
+      'Paso 1 — Reducción de Filas y Columnas',
+      'Paso 2 — Primera Ramificación: ¿Qué tramo definimos primero?',
+      'Paso 3 — Evaluar N1: El bus va de Guadalajara a Monterrey',
+      'Paso 4 — Profundización: Completando el itinerario de la gira',
+      'Paso 5 — ¡El Itinerario Óptimo de la Gira está confirmado!'
+    ];
+    var stepBodies=[
+      '<p>El manager de Café Tacvba presenta la matriz de distancias entre las 5 ciudades sede. El <strong>nodo raíz</strong> del árbol B&B representa el espacio completo de posibles itinerarios — todavía no se ha decidido el orden de visita de ninguna ciudad.</p><pre class="pdf-code">Matriz de costos de la gira C[5×5] (km):\n          CDMX  GDL   MTY   PUE   QRO\nCDMX (1) [  ∞    540   920   130   200 ]\nGDL  (2) [ 540    ∞    460   670   340 ]\nMTY  (3) [ 920   460    ∞   1050   730 ]\nPUE  (4) [ 130   670  1050    ∞    330 ]\nQRO  (5) [ 200   340   730   330    ∞  ]\n\nItinerario actual: sin definir (∅)\nLB: pendiente | Rutas posibles: (5-1)!/2 = 12</pre>',
+      '<p>Para obtener la cota inferior del nodo raíz, reducimos la matriz restando el mínimo de cada fila y luego de cada columna.</p><pre class="pdf-code">REDUCCIÓN DE FILAS:\nFila 1 (CDMX): mín(540,920,130,200)=130  → -130\nFila 2 (GDL):  mín(540,460,670,340)=340  → -340\nFila 3 (MTY):  mín(920,460,1050,730)=460 → -460\nFila 4 (PUE):  mín(130,670,1050,330)=130 → -130\nFila 5 (QRO):  mín(200,340,730,330)=200  → -200\n               ─────────────────────\n               Σ filas = 1,260 km\n\nREDUCCIÓN DE COLUMNAS:\nCol MTY (3): mín(790,120,920,530)=120     → -120\nOtras columnas: mínimos ya son 0\n               Σ cols = 120 km\n\n══ LB RAÍZ = 1,260 + 120 = 1,380 km ══</pre><p><strong>Interpretación:</strong> El autobús no puede recorrer menos de 1,380 km en ningún itinerario posible.</p>',
+      '<p>Elegimos el tramo con mayor "penalización" por no incluirlo. Para cada celda con valor 0 en la matriz reducida calculamos: mín(fila sin col) + mín(col sin fila).</p><pre class="pdf-code">Tramos candidatos (celdas con valor 0):\n──────────────────────────────────────────────────\nCDMX→PUE (1→4): 70+130 = 200\nGDL→QRO  (2→5): 0+70   =  70\nMTY→GDL  (3→2): 270+140= 410\nGDL→MTY  (2→3): 0+530  = 530  ◄ MÁXIMO → elegido\nPUE→CDMX (4→1): 0+0    =   0\nQRO→CDMX (5→1): 0+0    =   0\n──────────────────────────────────────────────────\nCreamos dos subproblemas:\n  N1: incluir GDL→MTY  → LB(N1) = a calcular\n  N2: excluir GDL→MTY  → LB(N2) = 1,380+530 = 1,910 km</pre>',
+      '<p>Al incluir el tramo GDL→MTY (2→3), eliminamos fila 2 y columna 3, ponemos ∞ en (3,2) para evitar subtour y reducimos la submatriz.</p><pre class="pdf-code">Submatriz tras confirmar GDL→MTY:\n          CDMX  GDL   PUE   QRO\nCDMX (1) [  ∞    410     0    70 ]\nMTY  (3) [ 460    ∞    590   270 ]  ← (3,2)=∞\nPUE  (4) [   0   540    ∞    200 ]\nQRO  (5) [   0   140   130    ∞  ]\n\nReducción filas: MTY(3)=270 → Σ=270\nReducción cols:  GDL(2)=140 → Σ=140\n\nLB(N1) = 1,380+0+270+140 = 1,790 km\nTramos confirmados: { GDL→MTY }</pre>',
+      '<p>El algoritmo continúa ramificando, podando nodos cuyo LB supera el mejor costo conocido o que generan subtours.</p><pre class="pdf-code">Árbol de búsqueda — Gira Café Tacvba:\n══════════════════════════════════════════════════\nNodo    Tramos confirmados            LB       Estado\n──────────────────────────────────────────────────\nRaíz    { }                           1,380 km Explorado\nN1      { GDL→MTY }                   1,790 km Explorado\nN2      { ¬GDL→MTY }                  1,910 km PODADO ✂\nN3      { GDL→MTY, PUE→CDMX }        1,790 km Explorado\nN4      { GDL→MTY, CDMX→PUE }        ∞        PODADO ✂ subtour\nN5      { GDL→MTY, QRO→CDMX }        1,790 km Explorado\nN6      { GDL→MTY, ¬QRO→CDMX }       1,910 km PODADO ✂\nN7      { ..., QRO→GDL }             1,790 km Explorado\nN8      { ..., MTY→CDMX }            ∞        PODADO ✂ subtour\nN9      { ..., CDMX→QRO }            1,860 km Explorado\nN10     { ..., ¬CDMX→QRO }           1,910 km PODADO ✂\nN11     { ..., MTY→QRO }             1,790 km Explorado\nN12 ★   Itinerario completo           2,180 km ← ÓPTIMO\n══════════════════════════════════════════════════\nNodos explorados: 13 de 64 → ahorro del 80%</pre>',
+      '<p>El algoritmo terminó. La cola de nodos activos está vacía y el itinerario óptimo está confirmado matemáticamente.</p><pre class="pdf-code">🎸 ITINERARIO ÓPTIMO — CAFÉ TACVBA "CUATRO CAMINOS: LA VUELTA"\n══════════════════════════════════════════════════════\nOrden de sedes: CDMX → PUE → QRO → GDL → MTY → CDMX\n\nDesglose de tramos:\n  CDMX → PUE  :   130 km  (concierto en Puebla)\n  PUE  → QRO  :   330 km  (concierto en Querétaro)\n  QRO  → GDL  :   340 km  (concierto en Guadalajara)\n  GDL  → MTY  :   460 km  (concierto en Monterrey)\n  MTY  → CDMX :   920 km  (regreso a Ciudad de México)\n                ──────────\n  TOTAL        : 2,180 km  ✓\n\nGarantía matemática: ningún otro orden produce\nun recorrido menor a 2,180 km.\n══════════════════════════════════════════════════════</pre>'
+    ];
+    for(var si=0;si<6;si++){
+      stepsHTML+='<div class="pdf-step-block"><div class="pdf-step-num">Paso '+si+'</div><div class="pdf-step-title">'+stepTitles[si]+'</div>'+stepBodies[si]+'</div>';
+    }
+    stepsHTML+='</div>';
+
+    /* Tree image */
+    var treeHTML='<div class="pdf-static-section"><h3 class="pdf-static-h">Árbol de Branch &amp; Bound — Planificación de la Gira</h3>';
+    if(treeImg){
+      treeHTML+='<img src="'+treeImg+'" class="pdf-static-img" alt="Árbol Branch and Bound">';
+    } else {
+      treeHTML+=treeFallbackText();
+    }
+    treeHTML+='<p class="pdf-static-caption">Verde = nodos explorados | Naranja = cotas altas | Rojo = podados | Dorado ★ = óptimo encontrado</p></div>';
+
+    div.innerHTML = mapHTML + stepsHTML + treeHTML;
+    document.getElementById('desarrollo').appendChild(div);
+
+    /* 6 ── Print */
+    setTimeout(function(){
+      window.print();
+      setTimeout(cleanupPrint, 1200);
+    },300);
+
+  }, 350);
+}
+
+function mapFallbackTable(){
+  return '<table class="pdf-map-table"><thead><tr><th>De \\ Hacia</th><th>CDMX</th><th>GDL</th><th>MTY</th><th>PUE</th><th>QRO</th></tr></thead><tbody>'
+    +'<tr><td><strong>CDMX</strong></td><td>—</td><td>540</td><td>920</td><td>130</td><td>200</td></tr>'
+    +'<tr><td><strong>GDL</strong></td><td>540</td><td>—</td><td>460</td><td>670</td><td>340</td></tr>'
+    +'<tr><td><strong>MTY</strong></td><td>920</td><td>460</td><td>—</td><td>1050</td><td>730</td></tr>'
+    +'<tr><td><strong>PUE</strong></td><td>130</td><td>670</td><td>1050</td><td>—</td><td>330</td></tr>'
+    +'<tr><td><strong>QRO</strong></td><td>200</td><td>340</td><td>730</td><td>330</td><td>—</td></tr>'
+    +'</tbody></table>'
+    +'<p style="margin-top:.5rem;font-size:.85rem;color:#555">Ruta óptima: <strong>CDMX → PUE (130) → QRO (330) → GDL (340) → MTY (460) → CDMX (920) = 2,180 km</strong></p>';
+}
+
+function treeFallbackText(){
+  return '<pre class="pdf-code" style="font-size:7.5pt">Árbol B&B — Gira Café Tacvba:\n'
+    +'Raíz {LB=1380}──┬── N1 incl(GDL→MTY) {LB=1790}\n'
+    +'                │        ├── N3 incl(PUE→CDMX) {LB=1790}\n'
+    +'                │        │       ├── N7 incl(QRO→GDL) {LB=1790}\n'
+    +'                │        │       │       └── N11 incl(MTY→QRO) {LB=1790}\n'
+    +'                │        │       │               └── N12 ★ ÓPTIMO: 2,180 km\n'
+    +'                │        │       └── N8 incl(MTY→CDMX) ∞ PODADO (subtour)\n'
+    +'                │        ├── N4 incl(CDMX→PUE) ∞ PODADO (subtour)\n'
+    +'                │        ├── N5 incl(QRO→CDMX) {LB=1790}\n'
+    +'                │        │       ├── N9  incl(CDMX→QRO) {LB=1860}\n'
+    +'                │        │       └── N10 excl(CDMX→QRO) 1910 PODADO\n'
+    +'                │        └── N6 excl(QRO→CDMX) 1910 PODADO\n'
+    +'                └── N2 excl(GDL→MTY) {LB=1910} PODADO\n'
+    +'</pre>';
+}
+
+function cleanupPrint(){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('print-include');});
+  var bl=document.getElementById('pdf-static-block');
+  if(bl) bl.parentNode.removeChild(bl);
+}
+
+/* ─── CURSOR ─── */
+var curEl=document.getElementById('cur'),ringEl=document.getElementById('cur-ring');
+var mx=-100,my=-100,rx=-100,ry=-100;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;curEl.style.left=mx+'px';curEl.style.top=my+'px';});
+(function ringLoop(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ringEl.style.left=rx+'px';ringEl.style.top=ry+'px';requestAnimationFrame(ringLoop);})();
+document.addEventListener('mouseover',function(e){if(e.target.closest('button,a,.obj-card,.idx-card,.badge,.q-opt'))curEl.classList.add('big');});
+document.addEventListener('mouseout',function(e){if(e.target.closest('button,a,.obj-card,.idx-card,.badge,.q-opt'))curEl.classList.remove('big');});
+
+/* ─── STARS ─── */
+(function(){
+  var c=document.getElementById('star-c'),ctx=c.getContext('2d'),stars=[];
+  function resize(){c.width=c.offsetWidth||window.innerWidth;c.height=c.offsetHeight||window.innerHeight;stars=[];for(var i=0;i<130;i++)stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+.3,a:Math.random(),da:(Math.random()*.007+.002)*(Math.random()<.5?1:-1),vx:(Math.random()-.5)*.05,vy:(Math.random()-.5)*.05});}
+  function draw(){if(!c.width){requestAnimationFrame(draw);return;}ctx.clearRect(0,0,c.width,c.height);stars.forEach(function(s){s.x=(s.x+s.vx+c.width)%c.width;s.y=(s.y+s.vy+c.height)%c.height;s.a+=s.da;if(s.a>=1||s.a<=0)s.da*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(245,234,216,'+Math.max(.05,s.a).toFixed(2)+')';ctx.fill();});requestAnimationFrame(draw);}
+  resize();draw();window.addEventListener('resize',resize);
+})();
+
+/* ─── GRID ─── */
+(function(){
+  var c=document.getElementById('grid-c'),ctx=c.getContext('2d'),off=0;
+  function resize(){c.width=c.offsetWidth||window.innerWidth;c.height=c.offsetHeight||window.innerHeight;}
+  function draw(){if(!c.width){requestAnimationFrame(draw);return;}ctx.clearRect(0,0,c.width,c.height);var step=62,o=off%step;ctx.strokeStyle='rgba(184,115,51,1)';ctx.lineWidth=.5;for(var x=o;x<c.width;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();}for(var y=o;y<c.height;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}ctx.fillStyle='rgba(212,160,23,.22)';for(var xi=o;xi<c.width;xi+=step)for(var yi=o;yi<c.height;yi+=step){ctx.beginPath();ctx.arc(xi,yi,1.4,0,Math.PI*2);ctx.fill();}off+=.16;requestAnimationFrame(draw);}
+  resize();draw();window.addEventListener('resize',resize);
+})();
+
+/* ─── STEP TABS ─── */
+function showStep(idx,btn){document.querySelectorAll('.stab').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.spanel').forEach(function(p){p.classList.remove('active');});btn.classList.add('active');document.getElementById('sp'+idx).classList.add('active');}
+
+/* ─── INTRO TREE ─── */
+var iN=[{x:.50,y:.10,label:'Raíz',sub:'LB=1380',c:'#1a6b5a',p:-1},{x:.27,y:.37,label:'N1',sub:'LB=1790',c:'#1a6b5a',p:0},{x:.73,y:.37,label:'N2',sub:'LB=1910',c:'#b87333',p:0},{x:.13,y:.66,label:'N3',sub:'LB=1790',c:'#1a6b5a',p:1},{x:.42,y:.66,label:'N4 ✕',sub:'SUBTOUR',c:'#8b3a1e',p:1},{x:.58,y:.66,label:'N5',sub:'LB=1790',c:'#1a6b5a',p:2},{x:.87,y:.66,label:'N6 ✕',sub:'PODADO',c:'#8b3a1e',p:2},{x:.13,y:.92,label:'★ ÓPT',sub:'2180 km',c:'#d4a017',p:3}];
+var iProg=0,iT=null;
+function drawIntroTree(){var canvas=document.getElementById('intro-tree');if(!canvas)return;var ctx=canvas.getContext('2d');canvas.width=canvas.offsetWidth||580;canvas.height=290;iProg=0;clearInterval(iT);iT=setInterval(function(){iProg++;rIT(canvas,ctx);if(iProg>=iN.length)clearInterval(iT);},280);}
+function rIT(canvas,ctx){var W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fafaf7';ctx.fillRect(0,0,W,H);for(var i=1;i<iProg;i++){var n=iN[i],par=iN[n.p];ctx.beginPath();ctx.strokeStyle=n.c==='#8b3a1e'?'rgba(139,58,30,.35)':'rgba(26,107,90,.45)';ctx.lineWidth=1.8;ctx.setLineDash(n.c==='#8b3a1e'?[5,4]:[]);ctx.moveTo(par.x*W,par.y*H+18);ctx.lineTo(n.x*W,n.y*H-18);ctx.stroke();ctx.setLineDash([]);}for(var j=0;j<iProg;j++){var nd=iN[j],nx=nd.x*W,ny=nd.y*H;ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=8;ctx.beginPath();ctx.ellipse(nx,ny,46,18,0,0,Math.PI*2);ctx.fillStyle=nd.c;ctx.fill();ctx.shadowBlur=0;if(j===iProg-1){ctx.strokeStyle='#d4a017';ctx.lineWidth=2.5;ctx.stroke();}ctx.fillStyle='white';ctx.textAlign='center';ctx.font='bold 9px Space Mono,monospace';ctx.fillText(nd.label,nx,ny-2);ctx.font='7.5px Space Mono,monospace';ctx.fillStyle='rgba(255,255,255,.8)';ctx.fillText(nd.sub,nx,ny+9);}}
+
+/* ─── MAP ─── */
+var cities=[{name:'CDMX',x:400,y:270},{name:'GDL',x:230,y:185},{name:'MTY',x:470,y:100},{name:'PUE',x:480,y:300},{name:'QRO',x:360,y:190}];
+var distM=[[0,540,920,130,200],[540,0,460,670,340],[920,460,0,1050,730],[130,670,1050,0,330],[200,340,730,330,0]];
+var optRoute=[0,3,4,1,2,0],mapCanvas,mapCtx,mapTimer=null;
+function initMap(){mapCanvas=document.getElementById('map-canvas');if(!mapCanvas)return;mapCanvas.width=mapCanvas.offsetWidth||760;mapCanvas.height=390;drawMapBase();}
+function drawMapBase(){var W=mapCanvas.width,H=mapCanvas.height;mapCtx=mapCanvas.getContext('2d');var g=mapCtx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#cce4f5');g.addColorStop(1,'#a8d0e6');mapCtx.fillStyle=g;mapCtx.fillRect(0,0,W,H);[[90,55,130,95,'rgba(140,180,100,.2)'],[280,28,190,135,'rgba(120,170,90,.17)'],[550,65,150,88,'rgba(140,180,100,.19)'],[45,265,115,105,'rgba(130,175,95,.19)'],[610,235,125,125,'rgba(120,170,90,.17)']].forEach(function(p){mapCtx.beginPath();mapCtx.ellipse(p[0]+p[2]/2,p[1]+p[3]/2,p[2]/2,p[3]/2,0,0,Math.PI*2);mapCtx.fillStyle=p[4];mapCtx.fill();});mapCtx.strokeStyle='rgba(255,255,255,.32)';mapCtx.lineWidth=.5;for(var x=0;x<W;x+=75){mapCtx.beginPath();mapCtx.moveTo(x,0);mapCtx.lineTo(x,H);mapCtx.stroke();}for(var y=0;y<H;y+=75){mapCtx.beginPath();mapCtx.moveTo(0,y);mapCtx.lineTo(W,y);mapCtx.stroke();}mapCtx.strokeStyle='rgba(0,0,0,.35)';mapCtx.lineWidth=2;mapCtx.beginPath();mapCtx.moveTo(25,H-22);mapCtx.lineTo(115,H-22);mapCtx.stroke();mapCtx.fillStyle='#444';mapCtx.font='9px Space Mono,monospace';mapCtx.textAlign='center';mapCtx.fillText('~350 km',70,H-10);drawCities();}
+function drawCities(){cities.forEach(function(c){mapCtx.beginPath();mapCtx.arc(c.x+2,c.y+2,11,0,Math.PI*2);mapCtx.fillStyle='rgba(0,0,0,.18)';mapCtx.fill();mapCtx.beginPath();mapCtx.arc(c.x,c.y,11,0,Math.PI*2);mapCtx.fillStyle='#8b3a1e';mapCtx.fill();mapCtx.strokeStyle='white';mapCtx.lineWidth=2.5;mapCtx.stroke();mapCtx.beginPath();mapCtx.arc(c.x,c.y,16,0,Math.PI*2);mapCtx.strokeStyle='rgba(139,58,30,.28)';mapCtx.lineWidth=1.2;mapCtx.stroke();mapCtx.fillStyle='#1a1008';mapCtx.font='bold 12px Crimson Pro,serif';mapCtx.textAlign='center';mapCtx.fillText(c.name,c.x,c.y+27);});}
+function drawRoute(route,color,width,alpha,dashed){mapCtx.save();mapCtx.strokeStyle=color;mapCtx.lineWidth=width;mapCtx.globalAlpha=alpha;if(dashed)mapCtx.setLineDash([9,5]);for(var k=0;k<route.length-1;k++){var a=cities[route[k]],b=cities[route[k+1]];mapCtx.beginPath();mapCtx.moveTo(a.x,a.y);mapCtx.lineTo(b.x,b.y);mapCtx.stroke();var ang=Math.atan2(b.y-a.y,b.x-a.x),mx2=a.x*.44+b.x*.56,my2=a.y*.44+b.y*.56;mapCtx.beginPath();mapCtx.moveTo(mx2,my2);mapCtx.lineTo(mx2-11*Math.cos(ang-Math.PI/6),my2-11*Math.sin(ang-Math.PI/6));mapCtx.lineTo(mx2-11*Math.cos(ang+Math.PI/6),my2-11*Math.sin(ang+Math.PI/6));mapCtx.closePath();mapCtx.fillStyle=color;mapCtx.fill();}mapCtx.setLineDash([]);mapCtx.restore();drawCities();}
+function mapShowAll(){stopMapAnim();drawMapBase();var rs=[[0,1,2,3,4,0],[0,1,3,2,4,0],[0,2,1,4,3,0],[0,3,1,2,4,0],[0,4,3,2,1,0]],cs=['#4a7fa5','#5a8a4a','#a55a4a','#7a4a9a','#4a9a9a'];rs.forEach(function(r,i){drawRoute(r,cs[i],2,.58,true);});document.getElementById('map-status').textContent='🕸 5 posibles rutas de gira de las 12 totales. La óptima se muestra con "Ruta óptima".';}
+function mapShowOptimal(){stopMapAnim();drawMapBase();drawRoute(optRoute,'#1a6b5a',4,.95,false);var t=0;for(var k=0;k<optRoute.length-1;k++)t+=distM[optRoute[k]][optRoute[k+1]];document.getElementById('map-status').textContent='⭐ Gira óptima de Café Tacvba: CDMX→PUE→QRO→GDL→MTY→CDMX | Total: '+t+' km';}
+var mapStep2=0;
+function mapAnimate(){stopMapAnim();drawMapBase();mapStep2=0;var segs=[[0,3],[3,4],[4,1],[1,2],[2,0]],legs=[130,330,340,460,920],labs=['CDMX','PUE','QRO','GDL','MTY','CDMX'];function step(){if(mapStep2>=segs.length){document.getElementById('map-status').textContent='🎸 ¡Gira completa! Café Tacvba recorrió 2,180 km en su tour nacional.';return;}drawMapBase();for(var i=0;i<=mapStep2;i++)drawRoute([segs[i][0],segs[i][1]],'#1a6b5a',4,.92,false);var cur=cities[segs[mapStep2][1]];mapCtx.beginPath();mapCtx.arc(cur.x,cur.y,22,0,Math.PI*2);mapCtx.strokeStyle='#d4a017';mapCtx.lineWidth=3;mapCtx.stroke();document.getElementById('map-status').textContent='🎵 '+labs.slice(0,mapStep2+2).join(' → ')+' | +'+legs[mapStep2]+' km en autobús';mapStep2++;mapTimer=setTimeout(step,920);}step();}
+function mapClear(){stopMapAnim();drawMapBase();document.getElementById('map-status').textContent='';}
+function stopMapAnim(){if(mapTimer){clearTimeout(mapTimer);mapTimer=null;}}
+
+/* ─── B&B TREE ─── */
+var tN=[{px:.500,py:.045,label:'Raíz',sub:'LB=1,380 km',c:'#1a6b5a',par:-1,el:'',pruned:false},{px:.260,py:.185,label:'N1:incl(2→3)',sub:'LB=1,790 km',c:'#1a6b5a',par:0,el:'incluir 2→3',pruned:false},{px:.740,py:.185,label:'N2:excl(2→3)',sub:'LB=1,910 km',c:'#b87333',par:0,el:'excluir 2→3',pruned:false},{px:.130,py:.355,label:'N3:incl(4→1)',sub:'LB=1,790 km',c:'#1a6b5a',par:1,el:'incluir 4→1',pruned:false},{px:.390,py:.355,label:'N4:incl(1→4)',sub:'✕ SUBTOUR',c:'#8b3a1e',par:1,el:'incluir 1→4',pruned:true},{px:.620,py:.355,label:'N5:incl(5→1)',sub:'LB=1,790 km',c:'#1a6b5a',par:2,el:'incluir 5→1',pruned:false},{px:.860,py:.355,label:'N6:excl(5→1)',sub:'✕ PODADO',c:'#8b3a1e',par:2,el:'excluir 5→1',pruned:true},{px:.065,py:.530,label:'N7:incl(5→2)',sub:'LB=1,790 km',c:'#1a6b5a',par:3,el:'incluir 5→2',pruned:false},{px:.200,py:.530,label:'N8:incl(3→1)',sub:'✕ SUBTOUR',c:'#8b3a1e',par:3,el:'incluir 3→1',pruned:true},{px:.570,py:.530,label:'N9:incl(1→5)',sub:'LB=1,860 km',c:'#b87333',par:5,el:'incluir 1→5',pruned:false},{px:.700,py:.530,label:'N10:excl(1→5)',sub:'✕ PODADO',c:'#8b3a1e',par:5,el:'excluir 1→5',pruned:true},{px:.065,py:.720,label:'N11:incl(3→5)',sub:'LB=1,790 km',c:'#1a6b5a',par:7,el:'incluir 3→5',pruned:false},{px:.065,py:.920,label:'★ ÓPTIMO',sub:'2,180 km ✓',c:'#d4a017',par:11,el:'CDMX→...→CDMX',pruned:false}];
+var tInfo=['📍 Nodo Raíz: LB=1260(filas)+120(cols)=1,380 km. Mínimo absoluto posible.','🔀 Ramificamos arco (2→3) GDL→MTY — mayor penalización=530.','🔀 N2 excluye (2→3). LB=1,910 km. Exploramos N1 primero.','🔀 Desde N1, arco (4→1) PUE→CDMX. N3 hereda LB=1,790 km.','✂️ N4 incluye (1→4): formaría subtour 1→4→1. PODADO.','🔀 Desde N2, incluir (5→1) QRO→CDMX → N5 con LB=1,790 km.','✂️ N6 excluye (5→1). LB sube demasiado. PODADO.','🔀 Desde N3, incluir (5→2) QRO→GDL → N7.','✂️ N8 incluye (3→1): formaría subtour. PODADO.','🔀 N9 incluye (1→5) CDMX→QRO. LB=1,860. Aún competitivo.','✂️ N10 excluye (1→5). LB supera nuestro bound. PODADO.','🔀 N11 incluye (3→5) MTY→QRO. La ruta se completa.','🏆 ÓPTIMO: CDMX→PUE→QRO→GDL→MTY→CDMX=2,180 km. 13 de 64 nodos (ahorro 80%).'];
+var tStep=0,tAutoTimer=null,tAutoOn=false,tCanvas2,tCtx2;
+function initTree(){tCanvas2=document.getElementById('tree-canvas');if(!tCanvas2)return;tCanvas2.width=tCanvas2.offsetWidth||800;tCanvas2.height=540;tCtx2=tCanvas2.getContext('2d');tStep=0;renderTree([]);document.getElementById('tree-info').textContent='Presiona ▶ para comenzar.';}
+function renderTree(vis){var W=tCanvas2.width,H=tCanvas2.height;tCtx2.clearRect(0,0,W,H);tCtx2.fillStyle='#fafaf8';tCtx2.fillRect(0,0,W,H);for(var i=0;i<vis.length;i++){var nd=tN[vis[i]];if(nd.par<0)continue;var par=tN[nd.par],nx=nd.px*W,ny=nd.py*H,px2=par.px*W,py2=par.py*H;tCtx2.beginPath();tCtx2.strokeStyle=nd.pruned?'rgba(139,58,30,.3)':'rgba(26,107,90,.42)';tCtx2.lineWidth=1.8;tCtx2.setLineDash(nd.pruned?[5,4]:[]);var cpx=(nx+px2)/2,cpy=(ny+py2)/2;tCtx2.moveTo(px2,py2+17);tCtx2.quadraticCurveTo(cpx,cpy,nx,ny-17);tCtx2.stroke();tCtx2.setLineDash([]);tCtx2.fillStyle='#999';tCtx2.font='7.5px Space Mono,monospace';tCtx2.textAlign='center';tCtx2.fillText(nd.el,(nx+px2)/2+8,(ny+py2)/2-4);}for(var j=0;j<vis.length;j++){var vn=tN[vis[j]],vx=vn.px*W,vy=vn.py*H,isNew=(j===vis.length-1);tCtx2.shadowColor='rgba(0,0,0,.18)';tCtx2.shadowBlur=10;tCtx2.beginPath();tCtx2.ellipse(vx,vy,54,18,0,0,Math.PI*2);tCtx2.fillStyle=vn.c;tCtx2.fill();tCtx2.shadowBlur=0;if(isNew){tCtx2.beginPath();tCtx2.ellipse(vx,vy,60,24,0,0,Math.PI*2);tCtx2.strokeStyle=vn.c==='#d4a017'?'#f0c040':'rgba(212,160,23,.65)';tCtx2.lineWidth=2.5;tCtx2.stroke();}tCtx2.fillStyle='white';tCtx2.textAlign='center';tCtx2.font='bold 8px Space Mono,monospace';tCtx2.fillText(vn.label,vx,vy-2);tCtx2.font='7px Space Mono,monospace';tCtx2.fillStyle='rgba(255,255,255,.8)';tCtx2.fillText(vn.sub,vx,vy+9);}}
+function treeNext(){if(tStep>=tN.length)return;tStep++;var vis=[];for(var i=0;i<tStep;i++)vis.push(i);renderTree(vis);document.getElementById('tree-info').textContent=tInfo[tStep-1]||'';}
+function treeReset(){clearInterval(tAutoTimer);tAutoOn=false;document.getElementById('autobtn').textContent='⏩ Auto';tStep=0;if(tCtx2){tCtx2.clearRect(0,0,tCanvas2.width,tCanvas2.height);renderTree([]);}document.getElementById('tree-info').textContent='Presiona "▶ Siguiente nodo" para construir el árbol paso a paso.';}
+function treeAuto(){if(tAutoOn){clearInterval(tAutoTimer);tAutoOn=false;document.getElementById('autobtn').textContent='⏩ Auto';}else{tAutoOn=true;document.getElementById('autobtn').textContent='⏸ Pausar';tAutoTimer=setInterval(function(){if(tStep>=tN.length){clearInterval(tAutoTimer);tAutoOn=false;document.getElementById('autobtn').textContent='⏩ Auto';return;}treeNext();},820);}}
+
+/* ─── QUIZ ─── */
+var QUIZ=[
+  {q:'¿Cuál es el objetivo principal del Problema del Agente Viajero (TSP)?',opts:['Maximizar el número de ciudades visitadas en un tiempo límite.','Minimizar la distancia total recorriendo cada ciudad exactamente una vez y regresando al origen.','Encontrar la ruta más rápida entre dos ciudades específicas.','Minimizar el costo de los vuelos entre ciudades.'],correct:1,explain:'El TSP busca la ruta de menor costo que visita cada nodo del grafo <strong>exactamente una vez</strong> y regresa al punto de partida. Esta es la formulación clásica del problema.'},
+  {q:'¿Cuántas rutas posibles existen para un TSP con 5 ciudades?',opts:['5! = 120 rutas','(5-1)!/2 = 12 rutas','5 × 4 = 20 rutas','2⁵ = 32 rutas'],correct:1,explain:'Para n ciudades, el número de rutas en TSP simétrico es <strong>(n-1)!/2</strong>. Con n=5: (4!)/2 = 24/2 = <strong>12 rutas</strong>. El factor (n-1) fija la ciudad de inicio y el /2 elimina rutas inversas equivalentes.'},
+  {q:'¿Qué es la "poda" (pruning) en Branch & Bound?',opts:['Dividir un problema en dos subproblemas más pequeños.','Calcular la cota inferior de un nodo del árbol.','Eliminar ramas del árbol cuya cota inferior supera la mejor solución conocida.','Seleccionar el arco con mayor peso para incluirlo primero.'],correct:2,explain:'La <strong>poda</strong> descarta ramas completas del árbol cuando su LB es mayor o igual a la mejor solución factible encontrada. Así se evita explorar regiones que no pueden contener el óptimo.'},
+  {q:'¿Cuál es la cota inferior (LB) del nodo raíz en el problema de las 5 ciudades mexicanas?',opts:['1,260 km','1,790 km','2,180 km','1,380 km'],correct:3,explain:'La reducción de la matriz produce: <strong>1,260 km</strong> (reducción de filas) + <strong>120 km</strong> (reducción de columnas) = <strong>1,380 km</strong>. Este es el límite inferior global: ninguna ruta puede costar menos.'},
+  {q:'¿Qué significa que un arco genere un "subtour" en el TSP?',opts:['Que el arco tiene el menor costo en la matriz.','Que incluir ese arco formaría un ciclo que no recorre todas las ciudades.','Que el arco conecta dos ciudades muy alejadas.','Que el arco ya fue incluido en la solución óptima.'],correct:1,explain:'Un <strong>subtour</strong> es un ciclo que cierra un subconjunto de ciudades antes de visitar todas. Por ejemplo, incluir (1→4) y (4→1) formaría el ciclo 1→4→1 sin pasar por las demás ciudades. Estos nodos se podan inmediatamente.'},
+  {q:'¿Cuál es la solución óptima del TSP para las 5 ciudades mexicanas?',opts:['CDMX→GDL→MTY→PUE→QRO→CDMX con 2,580 km','CDMX→QRO→GDL→MTY→PUE→CDMX con 2,190 km','CDMX→PUE→QRO→GDL→MTY→CDMX con 2,180 km','CDMX→MTY→GDL→QRO→PUE→CDMX con 2,380 km'],correct:2,explain:'La ruta óptima es <strong>CDMX→PUE→QRO→GDL→MTY→CDMX</strong>: 130+330+340+460+920 = <strong>2,180 km</strong>. B&B confirmó que ningún nodo con LB menor puede mejorarla.'},
+  {q:'¿Qué ventaja principal tiene Branch & Bound sobre la fuerza bruta?',opts:['Siempre encuentra la solución en tiempo polinomial.','Encuentra una solución aproximada mucho más rápido.','Elimina sistemáticamente regiones del espacio de búsqueda que no pueden contener el óptimo.','Usa programación dinámica para reutilizar cálculos previos.'],correct:2,explain:'La principal ventaja de B&B es la <strong>poda inteligente</strong>: al calcular cotas inferiores ajustadas, descarta grandes regiones del árbol sin evaluarlas. En nuestro ejemplo, solo se exploraron 13 de 64 nodos (ahorro del 80%), manteniendo la garantía de optimalidad.'},
+  {q:'¿Cuál es la complejidad en el peor caso de Branch & Bound para el TSP?',opts:['O(n²)','O(n log n)','O(n!)','O(2ⁿ)'],correct:2,explain:'En el peor caso, B&B para TSP tiene complejidad <strong>O(n!)</strong> — equivalente a la fuerza bruta — porque el árbol podría explorar todas las permutaciones. En la práctica la poda lo hace mucho más eficiente, pero para n > 60 se prefieren heurísticas.'},
+  {q:'¿Cómo se calcula la cota inferior en Branch & Bound para TSP?',opts:['Sumando todas las distancias de la matriz de costos.','Reduciendo la matriz: restando el mínimo de cada fila y luego de cada columna.','Calculando la distancia promedio entre ciudades.','Multiplicando el número de ciudades por la distancia mínima global.'],correct:1,explain:'La <strong>reducción de matriz</strong> (Little et al., 1963) resta el mínimo de cada fila y luego de cada columna. La suma de todos los valores restados es la cota inferior, garantizando que el costo real de cualquier ruta sea al menos igual a esa cota.'},
+  {q:'¿Cuál método de programación entera es el más apropiado cuando solo hay 2 variables de decisión enteras?',opts:['Branch & Bound para TSP','Planos de corte de Gomory','Método Gráfico','Branch & Bound para PI general'],correct:2,explain:'El <strong>Método Gráfico</strong> es el más adecuado con únicamente 2 variables enteras: permite visualizar la región factible en un plano 2D e identificar la solución óptima directamente. Para más variables se requieren métodos algebraicos como B&B o Gomory.'}
+];
+var quizBuilt=false,userAnswers=[];
+
+function buildQuiz(){
+  if(quizBuilt)return;
+  quizBuilt=true;
+  userAnswers=new Array(QUIZ.length).fill(-1);
+  var container=document.getElementById('quiz-questions');
+  var html='',letters=['A','B','C','D'];
+  for(var i=0;i<QUIZ.length;i++){
+    var q=QUIZ[i];
+    html+='<div class="q-card" id="qcard-'+i+'">';
+    html+='<div class="q-num">Pregunta '+(i+1)+' de '+QUIZ.length+'</div>';
+    html+='<div class="q-text">'+q.q+'</div>';
+    html+='<div class="q-options" id="qopts-'+i+'">';
+    for(var j=0;j<q.opts.length;j++){
+      html+='<div class="q-opt" id="qopt-'+i+'-'+j+'" onclick="selOpt('+i+','+j+')">';
+      html+='<span class="opt-letter">'+letters[j]+'</span>';
+      html+='<span class="opt-text">'+q.opts[j]+'</span>';
+      html+='</div>';
+    }
+    html+='</div>';
+    html+='<div class="q-explanation" id="qexp-'+i+'"></div>';
+    html+='</div>';
   }
+  container.innerHTML=html;
 }
 
-function treeNext() {
-  if (treeStep >= treeNodes.length) return;
-  treeStep++;
-  var vis = [];
-  for(var i=0;i<treeStep;i++) vis.push(i);
-  renderTree(vis);
-  document.getElementById('tree-info').textContent = treeInfo[treeStep-1] || '';
+function selOpt(qIdx,optIdx){
+  if(document.getElementById('quiz-submit-btn').disabled)return;
+  userAnswers[qIdx]=optIdx;
+  var opts=document.querySelectorAll('#qopts-'+qIdx+' .q-opt');
+  opts.forEach(function(o){o.classList.remove('selected');});
+  document.getElementById('qopt-'+qIdx+'-'+optIdx).classList.add('selected');
 }
 
-function treeReset() {
-  clearInterval(treeAutoTimer); treeAutoRunning=false;
-  document.getElementById('autobtn').textContent='⏩ Auto';
-  treeStep=0;
-  if(treeCtx2) { treeCtx2.clearRect(0,0,treeCanvas2.width,treeCanvas2.height); renderTree([]); }
-  document.getElementById('tree-info').textContent='Presiona "▶ Siguiente nodo" para construir el árbol paso a paso, o "⏩ Auto" para la animación completa.';
-}
-
-function treeAuto() {
-  if(treeAutoRunning) {
-    clearInterval(treeAutoTimer); treeAutoRunning=false;
-    document.getElementById('autobtn').textContent='⏩ Auto';
-  } else {
-    treeAutoRunning=true;
-    document.getElementById('autobtn').textContent='⏸ Pausar';
-    treeAutoTimer = setInterval(function() {
-      if(treeStep>=treeNodes.length){
-        clearInterval(treeAutoTimer); treeAutoRunning=false;
-        document.getElementById('autobtn').textContent='⏩ Auto';
-        return;
-      }
-      treeNext();
-    },820);
+function gradeQuiz(){
+  var unanswered=0;
+  for(var i=0;i<QUIZ.length;i++){if(userAnswers[i]===-1)unanswered++;}
+  if(unanswered>0){alert('⚠️ Tienes '+unanswered+' pregunta(s) sin responder. Por favor responde todas antes de calificar.');return;}
+  var correct=0;
+  for(var i=0;i<QUIZ.length;i++){
+    var q=QUIZ[i],chosen=userAnswers[i],isOk=(chosen===q.correct);
+    if(isOk)correct++;
+    var opts=document.querySelectorAll('#qopts-'+i+' .q-opt');
+    opts.forEach(function(o){o.classList.remove('selected');});
+    document.getElementById('qopt-'+i+'-'+q.correct).classList.add('correct');
+    if(!isOk)document.getElementById('qopt-'+i+'-'+chosen).classList.add('wrong');
+    for(var j=0;j<q.opts.length;j++){
+      (function(ii,jj){document.getElementById('qopt-'+ii+'-'+jj).onclick=null;})(i,j);
+    }
+    var expEl=document.getElementById('qexp-'+i);
+    expEl.innerHTML='<strong>✔ Respuesta correcta: '+['A','B','C','D'][q.correct]+'.</strong> '+q.explain;
+    expEl.classList.add('visible');
   }
+  document.getElementById('quiz-submit-btn').disabled=true;
+  var pct=Math.round((correct/QUIZ.length)*100);
+  var sb=document.getElementById('score-big'),sm=document.getElementById('score-msg'),panel=document.getElementById('score-panel');
+  sb.textContent=correct+' / '+QUIZ.length+'  ('+pct+'%)';
+  sb.className='score-big';
+  if(pct>=90){sb.classList.add('excellent');sm.textContent='🏆 ¡Excelente! Dominas el tema de Ramificación y Acotamiento para TSP.';}
+  else if(pct>=70){sb.classList.add('good');sm.textContent='✅ ¡Muy bien! Tienes una buena comprensión del método. Revisa las preguntas incorrectas.';}
+  else if(pct>=50){sb.classList.add('regular');sm.textContent='📖 Regular. Te recomendamos revisar las secciones de Introducción y Desarrollo.';}
+  else{sb.classList.add('poor');sm.textContent='📚 Necesitas repasar el contenido. Vuelve a leer las secciones antes de intentarlo de nuevo.';}
+  panel.classList.add('visible');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ── INIT ────────────────────────────────────────────── */
-window.addEventListener('load', function() {
-  // intro tree pre-draw on load if section visible
-  setTimeout(drawIntroTree, 400);
-});
-window.addEventListener('resize', function() {
-  if(currentPage==='desarrollo'){ initMap(); if(treeCanvas2) { treeCanvas2.width=treeCanvas2.offsetWidth||800; } }
-});
+function retryQuiz(){
+  userAnswers=new Array(QUIZ.length).fill(-1);
+  quizBuilt=false;
+  document.getElementById('score-panel').classList.remove('visible');
+  document.getElementById('quiz-submit-btn').disabled=false;
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ─── INIT ─── */
+window.addEventListener('load',function(){setTimeout(drawIntroTree,400);});
+window.addEventListener('resize',function(){if(currentPage==='desarrollo'){initMap();if(tCanvas2){tCanvas2.width=tCanvas2.offsetWidth||800;}}});
 </script>
 </body>
 </html>
